@@ -1,7 +1,7 @@
 # インターネット公開用セキュリティグループ
 resource "aws_security_group" "sbcntr-sg-ingress" {
   name = "sbcntr-sg-ingress"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group for ingress"
   tags = {
     Name: "sbcntr-sg-ingress" 
@@ -26,7 +26,7 @@ resource "aws_security_group" "sbcntr-sg-ingress" {
 # 管理用サーバー向けのセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-management" {
   name = "sbcntr-sg-management"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group for management server"
   
   tags = {
@@ -49,7 +49,7 @@ output "sbcntr-sg-management-id" {
 # バックエンドコンテナアプリ用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-container" {
   name = "sbcntr-sg-container"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group of backend app"
 
   tags = {
@@ -76,7 +76,7 @@ resource "aws_security_group" "sbcntr-sg-container" {
 # フロントエンドコンテナアプリ用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-front-container" {
   name = "sbcntr-sg-front-container"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group of front container app"
 
   tags = {
@@ -103,7 +103,7 @@ resource "aws_security_group" "sbcntr-sg-front-container" {
 # 内部用ロードバランサー用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-internal" {
   name = "sbcntr-sg-internal"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group for internal load balancer"
   tags = {
     Name: "sbcntr-sg-internal"
@@ -138,7 +138,7 @@ resource "aws_security_group" "sbcntr-sg-internal" {
 # DB用セキュリティグループ
 resource "aws_security_group" "sbcntr-sg-db" {
   name = "sbcntr-sg-db"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group of database"
 
   tags = {
@@ -182,7 +182,7 @@ resource "aws_security_group" "sbcntr-sg-db" {
 # VPCエンドポイント用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-egress" {
   name = "sbcntr-sg-egress"
-  vpc_id = aws_vpc.sbcntrVPC.id
+  vpc_id = aws_vpc.sbcntr-vpc.id
   description = "security group of vpc endpoint"
 
   tags = {

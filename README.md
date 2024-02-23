@@ -14,3 +14,11 @@ $ git clone https://github.com/uma-arai/sbcntr-frontend.git
 ```
 $ git clone https://github.com/uma-arai/sbcntr-backend.git
 ```
+## Cloud9の空き領域の確保
+- シェルファイルの実行
+```
+sh resize.sh 30
+```
+https://www.sbcr.jp/support/4815609994/
+
+## TODO: iamロールを作成すること
