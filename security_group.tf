@@ -40,6 +40,10 @@ resource "aws_security_group" "sbcntr-sg-management" {
     description = "allow all outbound traffic by default"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
+} 
+# セキュリティグループIDを出力
+output "sbcntr-sg-management-id" {
+  value = aws_security_group.sbcntr-sg-management.id
 }
 
 # バックエンドコンテナアプリ用のセキュリティグループ
@@ -166,6 +170,51 @@ resource "aws_security_group" "sbcntr-sg-db" {
     security_groups = [ aws_security_group.sbcntr-sg-management.id ]
   }
   
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    description = "allow all outbound traffic by default"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+}
+
+# VPCエンドポイント用のセキュリティグループ
+resource "aws_security_group" "sbcntr-sg-egress" {
+  name = "sbcntr-sg-egress"
+  vpc_id = aws_vpc.sbcntrVPC.id
+  description = "security group of vpc endpoint"
+
+  tags = {
+    Name: "sbcntr-sg-egress"
+  }
+
+  ### Back container -> VPC endpoint
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    description = "HTTPS for backend app"
+    security_groups = [ aws_security_group.sbcntr-sg-container.id ]
+  }
+
+  ### Front container -> VPC endpoint
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    description = "HTTPS for frontend app"
+    security_groups = [ aws_security_group.sbcntr-sg-front-container.id ]
+  }
+
+### Management Server -> VPC endpoint
+  ingress {
+    from_port = 443
+    to_port = 443
+    protocol = "tcp"
+    description = "HTTPS for management server"
+    security_groups = [ aws_security_group.sbcntr-sg-management.id ]
+  }
   egress {
     from_port = 0
     to_port = 0

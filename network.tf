@@ -72,6 +72,20 @@ resource "aws_subnet" "sbcntr-subnet-public-management-1c" {
   availability_zone = "ap-northeast-1c"
 }
 
+# Egress用
+resource "aws_subnet" "sbcntr-subnet-private-egress-1a" {
+  vpc_id = aws_vpc.sbcntrVPC.id
+  cidr_block = "10.0.248.0/24"
+  availability_zone = "ap-northeast-1a"
+}
+# Egress用
+resource "aws_subnet" "sbcntr-subnet-private-egress-1c" {
+  vpc_id = aws_vpc.sbcntrVPC.id
+  cidr_block = "10.0.249.0/24"
+  availability_zone = "ap-northeast-1c"
+}
+
+
 # IGW
 resource "aws_internet_gateway" "sbcntr-igw" {
   vpc_id = aws_vpc.sbcntrVPC.id
@@ -112,3 +126,5 @@ resource "aws_route_table_association" "sbcntr-subnet-public-management-1c" {
   subnet_id = aws_subnet.sbcntr-subnet-public-management-1c.id
   route_table_id = aws_route_table.sbcntr-public-route-table.id
 }
+
+# TODO: ルートテーブル周り変更すること
