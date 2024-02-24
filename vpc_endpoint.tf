@@ -14,20 +14,6 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-ecr-api" {
 
   # プライベートDNS名を有効
   private_dns_enabled = true
-  
-  # フルアクセスを指定
-  policy = <<EOT
-  {
-    "Statement": [
-        {
-            "Action": "*",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Resource": "*"
-        }
-    ]
-  }
-  EOT
 
   tags = {
     Name: "sbcntr-vpce-ecr-api"
@@ -50,20 +36,6 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-ecr-dkr" {
 
   # プライベートDNS名を有効
   private_dns_enabled = true
-  
-  # フルアクセスを指定
-  policy = <<EOT
-  {
-    "Statement": [
-        {
-            "Action": "*",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Resource": "*"
-        }
-    ]
-  }
-  EOT
 
   tags = {
     Name: "sbcntr-vpce-ecr-dkr"

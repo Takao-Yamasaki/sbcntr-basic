@@ -166,6 +166,10 @@ resource "aws_subnet" "sbcntr-subnet-private-egress-1a" {
   cidr_block = "10.0.248.0/24"
   map_public_ip_on_launch = false
   availability_zone = "ap-northeast-1a"
+  tags = {
+    "Name": "sbcntr-subnet-private-egress-1a",
+    "Type": "isolated",
+  }
 }
 # VPCエンドポイント（Egress）用のプライベートサブネット
 resource "aws_subnet" "sbcntr-subnet-private-egress-1c" {
@@ -173,6 +177,11 @@ resource "aws_subnet" "sbcntr-subnet-private-egress-1c" {
   cidr_block = "10.0.249.0/24"
   map_public_ip_on_launch = false
   availability_zone = "ap-northeast-1c"
+
+  tags = {
+    "Name": "sbcntr-subnet-private-egress-1c",
+    "Type": "isolated",
+  }
 }
 
 

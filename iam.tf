@@ -84,6 +84,12 @@ resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-ssm-instance-profile" {
   policy_arn = "arn:aws:iam::aws:policy/AWSCloud9SSMInstanceProfile"
 }
 
+# 既存のIAMポリシーのアタッチ(EC2用)
+resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-ec2-container-registory" {
+  role = aws_iam_role.sbcntr-cloud9-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+}
+
 # IAMインスタンスプロファイルの定義
 resource "aws_iam_instance_profile" "sbcntr-cloud9-role" {
   name = "sbcntr-cloud9-role"

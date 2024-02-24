@@ -14,6 +14,10 @@ VOLUMEID=$(aws ec2 describe-instances \
   --output text \
   --region $REGION)
 
+# echo
+echo "VOLUMEID: $VOLUMEID"
+echo "SIZE: $SIZE"
+
 # Resize the EBS volume.
 aws ec2 modify-volume --volume-id $VOLUMEID --size $SIZE
 
