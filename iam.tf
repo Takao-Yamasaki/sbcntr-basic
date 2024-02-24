@@ -62,13 +62,14 @@ resource "aws_iam_role" "sbcntr-cloud9-role" {
       {
         "Effect": "Allow",
         "Principal": {
-          "Service": "ec2.amazonaws.com"
+            "Service": "ec2.amazonaws.com"
         },
         "Action": "sts:AssumeRole"
       }
     ]
   }
   EOT
+  
 }
 
 # 作成したIAMポリシーのアタッチ
@@ -81,4 +82,10 @@ resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-role" {
 resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-ssm-instance-profile" {
   role = aws_iam_role.sbcntr-cloud9-role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSCloud9SSMInstanceProfile"
+}
+
+# IAMインスタンスプロファイルの定義
+resource "aws_iam_instance_profile" "sbcntr-cloud9-role" {
+  name = "sbcntr-cloud9-role"
+  role = aws_iam_role.sbcntr-cloud9-role.name
 }

@@ -4,7 +4,7 @@ resource "aws_cloud9_environment_ec2" "sbcntr-dev" {
   name          = "sbcntr-dev"
   image_id      = "amazonlinux-2023-x86_64"
   description = "cloud9 for application development"
-  automatic_stop_time_minutes = 30 // インスタンスが終了するまでの分数
+  automatic_stop_time_minutes = 60 // インスタンスが終了するまでの分数
   connection_type = "CONNECT_SSM" // SSM接続
   subnet_id = aws_subnet.sbcntr-subnet-public-management-1a.id
 }
