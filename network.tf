@@ -41,16 +41,17 @@ resource "aws_route_table" "sbcntr-route-ingress" {
 }
 
 # Ingress用パブリックサブネットへの紐付け
+resource "aws_route_table_association" "sbcntr-route-ingress-association-1c" {
+  route_table_id = aws_route_table.sbcntr-route-ingress.id
+  subnet_id = aws_subnet.sbcntr-subnet-public-ingress-1c.id
+}
+
+# Ingress用パブリックサブネットへの紐付け
 resource "aws_route_table_association" "sbcntr-route-ingress-association-1a" {
   route_table_id = aws_route_table.sbcntr-route-ingress.id
   subnet_id = aws_subnet.sbcntr-subnet-public-ingress-1a.id
 }
 
-# Ingress用パブリックサブネットへの紐付け
-resource "aws_route_table_association" "sbcntr-route-ingress-association-1c" {
-  route_table_id = aws_route_table.sbcntr-route-ingress.id
-  subnet_id = aws_subnet.sbcntr-subnet-public-ingress-1a.id
-}
 
 # コンテナアプリ用プライベートサブネット
 resource "aws_subnet" "sbcntr-subnet-private-container-1a" {
@@ -58,6 +59,10 @@ resource "aws_subnet" "sbcntr-subnet-private-container-1a" {
   cidr_block = "10.0.8.0/24"
   map_public_ip_on_launch = false
   availability_zone = "ap-northeast-1a"
+  tags = {
+    "Name": "sbcntr-subnet-private-container-1a",
+    "Type": "isolated",
+  }
 }
 
 # コンテナアプリ用プライベートサブネット
@@ -66,6 +71,10 @@ resource "aws_subnet" "sbcntr-subnet-private-container-1c" {
   cidr_block = "10.0.9.0/24"
   map_public_ip_on_launch = false
   availability_zone = "ap-northeast-1c"
+  tags = {
+    "Name": "sbcntr-subnet-private-container-1c",
+    "Type": "isolated",
+  }
 }
 
 # コンテナアプリ用ルートテーブル
@@ -88,20 +97,28 @@ resource "aws_route_table_association" "sbcntr-route-app-association-1c" {
   subnet_id = aws_subnet.sbcntr-subnet-private-container-1c.id
 }
 
-# DB用
+# DB用プライベートサブネット
 resource "aws_subnet" "sbcntr-subnet-private-db-1a" {
   vpc_id = aws_vpc.sbcntr-vpc.id
   cidr_block = "10.0.16.0/24"
   map_public_ip_on_launch = false
-  availability_zone = "ap-northeast-1c"
+  availability_zone = "ap-northeast-1a"
+  tags = {
+    "Name": "sbcntr-subnet-private-db-1a",
+    "Type": "isolated",
+  }
 }
 
-# DB用
+# DB用プライベートサブネット
 resource "aws_subnet" "sbcntr-subnet-private-db-1c" {
   vpc_id = aws_vpc.sbcntr-vpc.id
   cidr_block = "10.0.17.0/24"
   map_public_ip_on_launch = false
   availability_zone = "ap-northeast-1c"
+  tags = {
+    "Name": "sbcntr-subnet-private-db-1c",
+    "Type": "isolated",
+  }
 }
 
 # DB用のルートテーブル

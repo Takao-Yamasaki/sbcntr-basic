@@ -12,8 +12,10 @@ resource "aws_security_group" "sbcntr-sg-ingress" {
     from_port = 0
     to_port = 0
     protocol = "tcp"
+    description = "from 0.0.0.0/0:80"
     cidr_blocks = [ "0.0.0.0/0" ]
   }
+
   egress {
     from_port = 0
     to_port = 0

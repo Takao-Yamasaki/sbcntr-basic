@@ -90,6 +90,13 @@ resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-ec2-container-registory
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
+# 既存のIAMポリシーのアタッチ(EBS用)
+# NOTE: ec2:DescribeVolumesModificationsを追加するため
+resource "aws_iam_role_policy_attachment" "sbcntr-cloud9-ec2-full-access" {
+  role = aws_iam_role.sbcntr-cloud9-role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
 # IAMインスタンスプロファイルの定義
 resource "aws_iam_instance_profile" "sbcntr-cloud9-role" {
   name = "sbcntr-cloud9-role"

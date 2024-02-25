@@ -19,7 +19,13 @@ npm i -g yarn
 # yarnのインストールを確認
 yarn -v
 # 各モジュールのインストール
-yarn
+yarn install --pure-lockfile --production
 # Blitzがインストールされたことを確認
 npx blitz -v
-echo "setup for frontend finished!!"
+
+### Docker ######
+cd /home/ec2-user/environment/sbcntr-frontend
+docker image build -t sbcntr-frontend .
+docker image tag sbcntr-frontend:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend:v1
+aws ecr --region ap-northeast-1 get-login-password | docker login --username AWS --password-stdin https://${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend
+docker image push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend:v1

@@ -49,21 +49,9 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-s3" {
   service_name      = "com.amazonaws.ap-northeast-1.s3"
   vpc_endpoint_type = "Gateway"
 
-  route_table_ids = [ aws_route_table.sbcntr-route-app.id ]
-  
-  # フルアクセスを指定
-  policy = <<EOT
-  {
-    "Statement": [
-        {
-            "Action": "*",
-            "Effect": "Allow",
-            "Principal": "*",
-            "Resource": "*"
-        }
-    ]
-  }
-  EOT
+  route_table_ids = [ 
+    aws_route_table.sbcntr-route-app.id
+  ]
 
   tags = {
     Name: "sbcntr-vpce-s3"
