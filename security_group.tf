@@ -103,6 +103,8 @@ resource "aws_security_group" "sbcntr-sg-front-container" {
 }
 
 # 内部用ロードバランサー用のセキュリティグループ
+# テストリスナーのポートには、管理サーバーのみからアクセスできるようにする
+# TODO: ここを変更する
 resource "aws_security_group" "sbcntr-sg-internal" {
   name = "sbcntr-sg-internal"
   vpc_id = aws_vpc.sbcntr-vpc.id
@@ -144,7 +146,7 @@ resource "aws_security_group" "sbcntr-sg-db" {
   description = "security group of database"
 
   tags = {
-    Name: "sbcntr-sg-internal"
+    Name: "sbcntr-sg-db"
   }
 
   # Backend container -> DB

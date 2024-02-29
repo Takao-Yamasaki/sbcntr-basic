@@ -41,6 +41,27 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-ecr-dkr" {
     Name: "sbcntr-vpce-ecr-dkr"
   }
 }
+# VPCエンドポイント（インターフェース型）
+# ColudWatch logs(Fargateのログ転送経路)に使用する
+resource "aws_vpc_endpoint" "sbcntr-vpce-logs" {
+  vpc_id = aws_vpc.sbcntr-vpc.id
+  service_name = "com.amazonaws.ap-northeast-1.logs"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
+    aws_subnet.sbcntr-subnet-private-egress-1a.id,
+    aws_subnet.sbcntr-subnet-private-egress-1c.id,
+  ]
+
+  # セキュリティグループをアタッチ
+  security_group_ids = [ aws_security_group.sbcntr-sg-egress.id ]
+
+  # プライベートDNS名を有効
+  private_dns_enabled = true
+
+  tags = {
+    Name: "sbcntr-vpce-logs"
+  }
+}
 
 # VPCエンドポイント（ゲートウェイ型）
 # S3のイメージ取得に使用する
