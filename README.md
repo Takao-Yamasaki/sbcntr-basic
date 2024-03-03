@@ -25,50 +25,32 @@ $ sh resize.sh 30
 公式サイトにも記載あり
 - https://docs.aws.amazon.com/ja_jp/cloud9/latest/user-guide/move-environment.html
 - https://dev.classmethod.jp/articles/expand-the-disk-size-of-cloud9/
-## アプリケーションの環境構築
-- フロントエンド
+## アプリケーションの環境構築(イメージのビルドからイメージ登録まで)
+- 1.フロントエンド
 ```
 $ chmod 755 setup_frontend.sh
 $ ./setup_frontend.sh
 ```
-- バックエンド
+- 2.バックエンド
 ```
 $ chmod 755 setup_backend.sh
 $ ./setup_backend.sh
 ```
-## イメージのビルドからイメージ登録まで
-(注意)シェルスクリプトに記載済み
+## 挙動確認
 - バックエンド
 ```
-$ cd /home/ec2-user/environment/sbcntr-backend
-# イメージのビルド
-$ docker image build -t sbcntr-backend:v1 .
-$ docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"
-$ AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
-# イメージへのタグ付け
-$ docker image tag sbcntr-backend:v1 ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend:v1
-# Dockerへの認証
-$ aws ecr --region ap-northeast-1 get-login-password | docker login --username AWS --password-stdin https://${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend
-# イメージのプッシュ
-$ docker image push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend:v1
-# ビルド済みのイメージを削除
-$ docker image rm -f $(docker image ls -q)
-# イメージの取得
-$ docker image pull ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend:v1
 # コンテナを起動
 $ docker container run -d -p 8080:80 ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend:v1
 # APIサーバーにリクエスト送信
 $ date; curl http://localhost:8080/v1/helloworld
 ```
-- フロントエンド
+- バックエンドアプリケーションへのALB経由の疎通確認
 ```
-$ cd /home/ec2-user/environment/sbcntr-frontend
-$ docker image build -t sbcntr-frontend .
-$ docker image tag sbcntr-frontend:latest ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend:v1
-$ aws ecr --region ap-northeast-1 get-login-password | docker login --username AWS --password-stdin https://${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend
-$ docker image push ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-frontend:v1
+$ curl http://<ALBのDNS名>:80/v1/helloworld
+{"data":"Hello world"}
 ```
-TODO: コンテナオーケストレーションからやる
+- フロントエンドの挙動確認
+# TODO: ここから実装すること
 
 ## 環境の削除
 - (注意)ECRのイメージを事前に削除すること

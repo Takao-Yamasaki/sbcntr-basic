@@ -130,6 +130,15 @@ resource "aws_security_group" "sbcntr-sg-internal" {
     security_groups = [ aws_security_group.sbcntr-sg-management.id ]
   }
 
+  # Management Container -> Internal LB
+  ingress {
+    from_port = 10080
+    to_port = 10080
+    protocol = "tcp"
+    description = "THe test port for management server"
+    security_groups = [ aws_security_group.sbcntr-sg-management.id ]
+  }
+
   egress {
     from_port = 0
     to_port = 0
