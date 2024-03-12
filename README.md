@@ -50,7 +50,7 @@ $ curl http://<ALBのDNS名>:80/v1/helloworld
 {"data":"Hello world"}
 ```
 - フロントエンドの挙動確認
-# TODO: ここから実装すること
+TODO: ここから実装すること
 
 ## 環境の削除
 - (注意)ECRのイメージを事前に削除すること
