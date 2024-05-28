@@ -1,13 +1,12 @@
-# NOTE: 作業中のためコメントアウト
-# resource "aws_vpc" "sbcntr-vpc" {
-#   cidr_block           = "10.0.0.0/16"
-#   enable_dns_support   = true
-#   enable_dns_hostnames = true
+resource "aws_vpc" "sbcntr-vpc" {
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
+  enable_dns_hostnames = true
 
-#   tags = {
-#     Name = "sbctr-vpc"
-#   }
-# }
+  tags = {
+    Name = "sbctr-vpc"
+  }
+}
 
 # Ingress用パブリックサブネット
 resource "aws_subnet" "sbcntr-subnet-public-ingress-1a" {
@@ -142,17 +141,17 @@ resource "aws_route_table_association" "sbcntr-route-db-association-1c" {
   subnet_id      = aws_subnet.sbcntr-subnet-private-db-1c.id
 }
 
-# # 管理用のパブリックサブネット
-# resource "aws_subnet" "sbcntr-subnet-public-management-1a" {
-#   vpc_id                  = aws_vpc.sbcntr-vpc.id
-#   cidr_block              = "10.0.240.0/24"
-#   map_public_ip_on_launch = true
-#   availability_zone       = "ap-northeast-1a"
-#   tags = {
-#     "Name" : "sbcntr-subnet-public-management-1a",
-#     "Type" : "public",
-#   }
-# }
+# 管理用のパブリックサブネット
+resource "aws_subnet" "sbcntr-subnet-public-management-1a" {
+  vpc_id                  = aws_vpc.sbcntr-vpc.id
+  cidr_block              = "10.0.240.0/24"
+  map_public_ip_on_launch = true
+  availability_zone       = "ap-northeast-1a"
+  tags = {
+    "Name" : "sbcntr-subnet-public-management-1a",
+    "Type" : "public",
+  }
+}
 
 # 管理用のパブリックサブネット
 resource "aws_subnet" "sbcntr-subnet-public-management-1c" {
@@ -203,10 +202,10 @@ resource "aws_subnet" "sbcntr-subnet-private-egress-1c" {
 }
 
 
-# # IGW
-# resource "aws_internet_gateway" "sbcntr-igw" {
-#   vpc_id = aws_vpc.sbcntr-vpc.id
-# }
+# IGW
+resource "aws_internet_gateway" "sbcntr-igw" {
+  vpc_id = aws_vpc.sbcntr-vpc.id
+}
 
 # ルート
 resource "aws_route" "sbcntr-route-ingress-default" {
