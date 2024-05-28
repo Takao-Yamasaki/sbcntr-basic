@@ -1,6 +1,6 @@
 # プライベートリポジトリ バックエンド
 resource "aws_ecr_repository" "sbcntr-backend" {
-  name = "sbcntr-backend"
+  name                 = "sbcntr-backend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -10,7 +10,7 @@ resource "aws_ecr_repository" "sbcntr-backend" {
 
 # プライベートリポジトリ フロントエンド
 resource "aws_ecr_repository" "sbcntr-frontend" {
-  name = "sbcntr-frontend"
+  name                 = "sbcntr-frontend"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
