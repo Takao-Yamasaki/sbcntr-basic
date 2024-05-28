@@ -138,7 +138,7 @@ resource "aws_lb_target_group" "sbcntr-tg-frontend" {
 
 # リスナー(Frontend)
 resource "aws_lb_listener" "sbcntr-frontend-listener1" {
-  load_balancer_arn = aws_lb.sbcntr-alb-internal.arn
+  load_balancer_arn = aws_lb.sbcntr-alb-frontend.arn
   port              = 80
   protocol          = "HTTP"
 
