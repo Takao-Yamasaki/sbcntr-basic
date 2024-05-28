@@ -106,7 +106,7 @@ resource "aws_ecs_service" "sbcntr-backend-service" {
 
   # 依存関係
   depends_on = [
-    aws_ecs_task_definition.bcntr-backend-def,
+    aws_ecs_task_definition.sbcntr-backend-def,
     aws_iam_role.ecs-codedeploy-role, # NOTE: 使うのか不明。不要な場合は削除
     aws_service_discovery_service.sbcntr-ecs-backend-service
   ]
