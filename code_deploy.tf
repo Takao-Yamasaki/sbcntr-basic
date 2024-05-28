@@ -2,20 +2,20 @@
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group
 resource "aws_codedeploy_app" "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service" {
   compute_platform = "ECS"
-  name = "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service"
+  name             = "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service"
 }
 
 # CodeDeployデプロイメントグループ
 # BlueGreenデプロイメント
 resource "aws_codedeploy_deployment_group" "dgp-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service" {
-  app_name = aws_codedeploy_app.app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service.name
+  app_name               = aws_codedeploy_app.app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  deployment_group_name = "codedeploy_deployment_group"
-  service_role_arn = aws_iam_role.ecs-codedeploy-role.arn
+  deployment_group_name  = "codedeploy_deployment_group"
+  service_role_arn       = aws_iam_role.ecs-codedeploy-role.arn
 
   auto_rollback_configuration {
     enabled = true
-    events = ["DEPLOYMENT_FAILURE"]
+    events  = ["DEPLOYMENT_FAILURE"]
   }
 
   blue_green_deployment_config {
@@ -34,7 +34,7 @@ resource "aws_codedeploy_deployment_group" "dgp-ecs-sbcntr-ecs-backend-cluster-s
 
   deployment_style {
     deployment_option = "WITH_TRAFFIC_CONTROL"
-    deployment_type = "BLUE_GREEN"
+    deployment_type   = "BLUE_GREEN"
   }
 
   ecs_service {
