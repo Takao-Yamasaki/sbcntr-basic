@@ -106,7 +106,7 @@ resource "aws_ecs_service" "sbcntr-backend-service" {
 
   # 依存関係
   depends_on = [
-    aws_ecs_task_definition.sbcntr-backend-def,
+    aws_ecs_task_definition.bcntr-backend-def,
     aws_iam_role.ecs-codedeploy-role, # NOTE: 使うのか不明。不要な場合は削除
     aws_service_discovery_service.sbcntr-ecs-backend-service
   ]
@@ -160,6 +160,11 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
       cpu       = 256,
       memory    = 512,
       essential = true, # タスク実行に必要かどうか
+      environment = [
+        {"name": "SESSION_SECRET_KEY", "value": "41b678c65b37bf99c37bcab522802760"},
+        {"name": "APP_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-frontend.dns_name}"},
+        {"name": "NOTIF_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-frontend.dns_name}"},
+      ]
       logConfiguration = {
         logDriver = "awslogs",
         options = {
