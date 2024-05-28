@@ -160,6 +160,11 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
       cpu       = 256,
       memory    = 512,
       essential = true, # タスク実行に必要かどうか
+      environment = [
+        {"name": "SESSION_SECRET_KEY", "value": "41b678c65b37bf99c37bcab522802760"},
+        {"name": "APP_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-frontend.dns_name}"},
+        {"name": "NOTIF_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-frontend.dns_name}"},
+      ]
       logConfiguration = {
         logDriver = "awslogs",
         options = {
