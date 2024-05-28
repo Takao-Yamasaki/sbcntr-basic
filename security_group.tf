@@ -9,8 +9,8 @@ resource "aws_security_group" "sbcntr-sg-ingress" {
 
   # -> IGW
   ingress {
-    from_port   = 0
-    to_port     = 0
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     description = "from 0.0.0.0/0:80"
     cidr_blocks = ["0.0.0.0/0"]
@@ -25,28 +25,28 @@ resource "aws_security_group" "sbcntr-sg-ingress" {
   }
 }
 
-# 管理用サーバー向けのセキュリティグループ
-resource "aws_security_group" "sbcntr-sg-management" {
-  name        = "sbcntr-sg-management"
-  vpc_id      = aws_vpc.sbcntr-vpc.id
-  description = "security group for management server"
+# # 管理用サーバー向けのセキュリティグループ
+# resource "aws_security_group" "sbcntr-sg-management" {
+#   name        = "sbcntr-sg-management"
+#   vpc_id      = aws_vpc.sbcntr-vpc.id
+#   description = "security group for management server"
 
-  tags = {
-    Name : "sbcntr-sg-management"
-  }
+#   tags = {
+#     Name : "sbcntr-sg-management"
+#   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    description = "allow all outbound traffic by default"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-# セキュリティグループIDを出力
-output "sbcntr-sg-management-id" {
-  value = aws_security_group.sbcntr-sg-management.id
-}
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"
+#     description = "allow all outbound traffic by default"
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
+# # セキュリティグループIDを出力
+# output "sbcntr-sg-management-id" {
+#   value = aws_security_group.sbcntr-sg-management.id
+# }
 
 # バックエンドコンテナアプリ用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-container" {
