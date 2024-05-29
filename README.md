@@ -65,7 +65,60 @@ frontend側にはECSサービスが存在せず、タスクが自動起動しな
 - ALB:`sbcntr-alb-frontend`のDNS名を使ってブラウザ表示
 - バックエンド側から`Hello World`が返ってきていることを確認
 - インターネット向けALB->フロントエンドアプリケーション->内部ALB->バックエンドアプリケーション
-
+## RDSの準備
+- DBユーザーの作成
+```bash
+$ cd /home/ec2-user/environment
+$ mysql -h <endpoint> -u admin -p
+password: <password>
+```
+```sql
+select host, user from mysql.user;
+create user sbcntruser@'%' identified by 'sbcntrEncp';
+grant all on sbcntrapp.* to sbcntruser@'%' with grant option;
+create user migrate@'%' with grant option;
+grant all on `prisma_migrate_shadow_db%`.* to migrate@'%' with grant option;
+select host, user from mysql.user;
+exit
+```
+### テーブルとデータの作成
+- 作成済みユーザーでのログインとテーブルが存在しないことを確認
+```bash
+$ cd /home/ec2-user/environment
+$ mysql -h <endpoint> -u sbcntruser -p
+password: sbcntrEncP
+```
+```bash
+$ cd /home/ec2-user/environment
+$ mysql -h <endpoint> -u migrate -p
+password: sbcntrMigrate
+```
+```sql
+use sbcntrapp;
+show tables;
+exit
+```
+- テーブルの作成とデータ投入(Britz.jsのmigrateコマンドを使用)
+```bash
+$ cd /home/ec2-user/environment/sbcntr-frontend
+$ git checkout main
+$ export DB_USERNAME=migrate
+$ export DB_PASSWORD=sbcntrMigrate
+$ export DB_HOST=<endpoint>
+$ export DB_NAME=sbcntrapp
+$ npm run migrate:dev
+$ npm run seed
+```
+- テーブルとデータの確認
+```bash
+$ mysql -h <endpoint> -u sbcntruser -p
+password: sbcntrEncP
+```
+```sql
+use sbcntrapp;
+show tables;
+select * from Notification;
+```
 
 ## 環境の削除
 ### 作業中の場合
@@ -78,11 +131,6 @@ $ terraform state list
 # Terraform管理下から除外
 $ terraform state rm aws_ecr_repository.sbcntr-frontend
 $ terraform state rm aws_ecr_repository.sbcntr-backend
-$ terraform state rm aws_cloud9_environment_ec2.sbcntr-dev
-$ terraform state rm aws_internet_gateway.sbcntr-igw
-$ terraform state rm aws_security_group.sbcntr-sg-management
-$ terraform state rm aws_subnet.sbcntr-subnet-public-management-1a
-$ terraform state rm aws_vpc.sbcntr-vpc
 ```
 ### 作業終了後
 - (注意)ECRのイメージを事前に削除すること
