@@ -152,6 +152,8 @@ resource "aws_iam_role_policy_attachment" "ecs-task-execution-role" {
   policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
 }
 
+# ECSタスク実行ロール用のIAMポリシー
+# Secret Manager用のIAMポリシー
 resource "aws_iam_policy" "ecs_task_execution_policy" {
   name        = "ecs_task_execution_policy"
   description = "Policy for ECS Task Execution"
