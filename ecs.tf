@@ -159,9 +159,9 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
   task_role_arn = aws_iam_role.ecs-task-execution-role.arn
   container_definitions = jsonencode([
     {
-      name = "app",
-      # TODO: 末尾をdbv1に変更すること
-      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:dbv1",
+      name      = "app",
+      # TODO: イメージを作ったあとにdbv1に変更すること
+      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:v1",
       cpu       = 256,
       memory    = 512,
       essential = true, # タスク実行に必要かどうか

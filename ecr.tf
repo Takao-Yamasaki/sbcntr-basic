@@ -1,5 +1,5 @@
+# # NOTE: 作業中のためコメントアウト
 # # プライベートリポジトリ バックエンド
-# # NOTE: 作業中のためコメントアウト 
 # resource "aws_ecr_repository" "sbcntr-backend" {
 #   name                 = "sbcntr-backend"
 #   image_tag_mutability = "MUTABLE"
@@ -10,7 +10,6 @@
 # }
 
 # # プライベートリポジトリ フロントエンド
-# # NOTE: 作業中のためコメントアウト
 # resource "aws_ecr_repository" "sbcntr-frontend" {
 #   name                 = "sbcntr-frontend"
 #   image_tag_mutability = "MUTABLE"

@@ -83,7 +83,7 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-s3" {
 # ECSタスクエージェントがSecrets Managerへ到達するのに使用
 resource "aws_vpc_endpoint" "sbcntr-vpce-secrets" {
   vpc_id            = aws_vpc.sbcntr-vpc.id
-  service_name      = "com.amazonaws.ap-northeast-secretsmanager"
+  service_name      = "com.amazonaws.ap-northeast-1.secretsmanager"
   vpc_endpoint_type = "Interface"
   subnet_ids = [
     aws_subnet.sbcntr-subnet-private-egress-1a.id,

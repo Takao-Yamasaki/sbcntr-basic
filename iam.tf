@@ -199,7 +199,7 @@ resource "aws_iam_role" "rds-monitering-role" {
 }
 
 # RDSモニタリング用のIAMポリシーをアタッチ
-resource "aws_iam_role_policy_attachment" "name" {
+resource "aws_iam_role_policy_attachment" "rds-monitering-role" {
   role       = aws_iam_role.rds-monitering-role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }

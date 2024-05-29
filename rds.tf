@@ -1,8 +1,8 @@
 # DBサブネットグループの作成
 ## https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group
 resource "aws_db_subnet_group" "sbcntr-rds-subnet-group" {
-  name        = "sbcntr-rds-subnet-group"
-  subnet_ids  = [
+  name = "sbcntr-rds-subnet-group"
+  subnet_ids = [
     aws_subnet.sbcntr-subnet-private-db-1a.id,
     aws_subnet.sbcntr-subnet-private-container-1c.id
   ]
@@ -38,7 +38,7 @@ resource "aws_rds_cluster_parameter_group" "sbcntr-aurora-rds-cluster-parameter-
 resource "aws_rds_cluster" "sbcntr-db-cluster" {
   cluster_identifier = "sbcntr-db"
   engine             = "aurora-mysql"
-  engine_version     = "5.7.mysql_aurora.2.10.2"
+  engine_version     = "5.7.mysql_aurora.2.11.2"
   master_username    = "admin"
   # パスワードはAWS側で自動生成
   master_password                  = random_password.sbcntr-db-password.result
@@ -58,8 +58,8 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
   enabled_cloudwatch_logs_exports = ["audit", "error", "slowquery"]
   # 暗号を有効化
   storage_encrypted = true
-  # 削除保護の有効化
-  deletion_protection = true
+  # NOTE: Terraformから削除できないので、削除保護の無効化
+  deletion_protection = false
   skip_final_snapshot = true
 
   tags = {
@@ -74,7 +74,7 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
 }
 
 # Auroraインスタンスの作成
-resource "aws_rds_cluster_instance" "name" {
+resource "aws_rds_cluster_instance" "sbcntr-db-instance" {
   count              = 2
   identifier         = "sbcntr-db-${count.index}"
   cluster_identifier = aws_rds_cluster.sbcntr-db-cluster.id
