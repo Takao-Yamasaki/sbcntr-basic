@@ -78,3 +78,25 @@ resource "aws_vpc_endpoint" "sbcntr-vpce-s3" {
     Name : "sbcntr-vpce-s3"
   }
 }
+
+# VPCエンドポイント（インターフェース型）
+# ECSタスクエージェントがSecrets Managerへ到達するのに使用
+resource "aws_vpc_endpoint" "sbcntr-vpce-secrets" {
+  vpc_id            = aws_vpc.sbcntr-vpc.id
+  service_name      = "com.amazonaws.ap-northeast-secretsmanager"
+  vpc_endpoint_type = "Interface"
+  subnet_ids = [
+    aws_subnet.sbcntr-subnet-private-egress-1a.id,
+    aws_subnet.sbcntr-subnet-private-egress-1c.id,
+  ]
+
+  # セキュリティグループをアタッチ
+  security_group_ids = [aws_security_group.sbcntr-sg-egress.id]
+
+  # プライベートDNS名を有効
+  private_dns_enabled = true
+
+  tags = {
+    Name : "sbcntr-vpce-secrets"
+  }
+}

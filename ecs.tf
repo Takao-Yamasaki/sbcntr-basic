@@ -33,6 +33,12 @@ resource "aws_ecs_task_definition" "sbcntr-backend-def" {
           hostPort      = 80,
         }
       ]
+      environment = [
+        { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
+        { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
+        { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
+        { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
+      ]
     }
   ])
 }
@@ -153,15 +159,20 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
   task_role_arn = aws_iam_role.ecs-task-execution-role.arn
   container_definitions = jsonencode([
     {
-      name      = "app",
-      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:v1",
+      name = "app",
+      # TODO: 末尾をdbv1に変更すること
+      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:dbv1",
       cpu       = 256,
       memory    = 512,
       essential = true, # タスク実行に必要かどうか
       environment = [
-        {"name": "SESSION_SECRET_KEY", "value": "41b678c65b37bf99c37bcab522802760"},
-        {"name": "APP_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-internal.dns_name}"},
-        {"name": "NOTIF_SERVICE_HOST", "value": "http://${aws_lb.sbcntr-alb-internal.dns_name}"},
+        { "name" : "SESSION_SECRET_KEY", "value" : "41b678c65b37bf99c37bcab522802760" },
+        { "name" : "APP_SERVICE_HOST", "value" : "http://${aws_lb.sbcntr-alb-internal.dns_name}" },
+        { "name" : "NOTIF_SERVICE_HOST", "value" : "http://${aws_lb.sbcntr-alb-internal.dns_name}" },
+        { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
+        { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
+        { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
+        { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
       ]
       logConfiguration = {
         logDriver = "awslogs",

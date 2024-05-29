@@ -69,14 +69,14 @@ resource "aws_security_group" "sbcntr-sg-container" {
 
 # インバウンドルール(Internal LB -> Backend Container)
 resource "aws_security_group_rule" "sbcntr-sg-container-from-sg-internal" {
-  type = "ingress"
-  from_port       = 80
-  to_port         = 80
-  protocol        = "tcp"
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
   # Internal LBからのアクセスを許可する
   source_security_group_id = aws_security_group.sbcntr-sg-internal.id
-  security_group_id = aws_security_group.sbcntr-sg-container.id
-  description     = "HTTP for internal lb"
+  security_group_id        = aws_security_group.sbcntr-sg-container.id
+  description              = "HTTP for internal lb"
 }
 
 # Frontend Container用のセキュリティグループ
@@ -100,14 +100,14 @@ resource "aws_security_group" "sbcntr-sg-front-container" {
 
 # インバウンドルール(Internet LB -> Frontend Container)
 resource "aws_security_group_rule" "sbcntr-sg-front-container-from-sg-ingress" {
-  type = "ingress"
-  from_port       = 80
-  to_port         = 80
-  protocol        = "tcp"
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
   # ingressからのアクセスを許可する
   source_security_group_id = aws_security_group.sbcntr-sg-ingress.id
-  security_group_id = aws_security_group.sbcntr-sg-front-container.id
-  description     = "HTTP for Ingress"
+  security_group_id        = aws_security_group.sbcntr-sg-front-container.id
+  description              = "HTTP for Ingress"
 }
 
 # 内部用ロードバランサー用のセキュリティグループ
@@ -131,38 +131,38 @@ resource "aws_security_group" "sbcntr-sg-internal" {
 
 # インバウンドルール(Frontend Container -> Internal LB)
 resource "aws_security_group_rule" "sbcntr-sg-internal-from-sg-front-container" {
-  type = "ingress"
-  from_port       = 80
-  to_port         = 80
-  protocol        = "tcp"
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
   # Frontendからアクセス許可
   source_security_group_id = aws_security_group.sbcntr-sg-front-container.id
-  security_group_id = aws_security_group.sbcntr-sg-internal.id
-  description     = "HTTP for frontend container"
+  security_group_id        = aws_security_group.sbcntr-sg-internal.id
+  description              = "HTTP for frontend container"
 }
 
 # インバウンドルール(Management Container -> Internal LB)
 resource "aws_security_group_rule" "sbcntr-sg-internal-from-sg-management-tcp" {
-  type = "ingress"
-  from_port       = 80
-  to_port         = 80
-  protocol        = "tcp"
+  type      = "ingress"
+  from_port = 80
+  to_port   = 80
+  protocol  = "tcp"
   # Managementからのアクセスを許可する
   source_security_group_id = aws_security_group.sbcntr-sg-management.id
-  security_group_id = aws_security_group.sbcntr-sg-internal.id
-  description     = "HTTP for management server"
+  security_group_id        = aws_security_group.sbcntr-sg-internal.id
+  description              = "HTTP for management server"
 }
 
 # テストポート向けインバウンドルール(Management Container -> Internal LB)
 resource "aws_security_group_rule" "sbcntr-sg-internal-from-sg-management-tcp-test-port" {
-  type = "ingress"
-  from_port       = 10080
-  to_port         = 10080
-  protocol        = "tcp"
+  type      = "ingress"
+  from_port = 10080
+  to_port   = 10080
+  protocol  = "tcp"
   # Managementからのアクセスを許可する
   source_security_group_id = aws_security_group.sbcntr-sg-management.id
-  security_group_id = aws_security_group.sbcntr-sg-internal.id
-  description     = "Test port for management server"
+  security_group_id        = aws_security_group.sbcntr-sg-internal.id
+  description              = "Test port for management server"
 }
 
 # DB用セキュリティグループ
