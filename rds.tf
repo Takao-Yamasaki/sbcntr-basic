@@ -2,7 +2,10 @@
 ## https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group
 resource "aws_db_subnet_group" "sbcntr-rds-subnet-group" {
   name        = "sbcntr-rds-subnet-group"
-  subnet_ids  = [aws_subnet.sbcntr-subnet-private-db-1a, aws_subnet.sbcntr-subnet-private-container-1c]
+  subnet_ids  = [
+    aws_subnet.sbcntr-subnet-private-db-1a.id,
+    aws_subnet.sbcntr-subnet-private-container-1c.id
+  ]
   description = "DB subnet group for Aurora"
 
   tags = {
@@ -47,6 +50,7 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
   db_instance_parameter_group_name = aws_db_parameter_group.sbcntr-aurora-rds-parameter-group.name
   # バックアップの保持期間は1日
   backup_retention_period = 1
+  # 自動バックアップを作成する時間帯
   preferred_backup_window = "05:00-07:00"
   # スナップショットにタグをコピー
   copy_tags_to_snapshot = true
@@ -87,7 +91,7 @@ resource "aws_rds_cluster_instance" "name" {
   auto_minor_version_upgrade = true
   # メンテナンスの開始日
   # NOTE: UTCなので、日曜の深夜2時から
-  preferred_backup_window = "Sat:17:00-Sat:17:30"
+  preferred_maintenance_window = "Sat:17:00-Sat:17:30"
 
   tags = {
     Name = "sbcntr-db-${count.index}"

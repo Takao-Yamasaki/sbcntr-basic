@@ -10,7 +10,7 @@ resource "aws_secretsmanager_secret" "sbcntr-mysql-secret" {
 }
 // シークレット値をkey:valueで登録
 resource "aws_secretsmanager_secret_version" "sbcntr-mysql-secret-version" {
-  secret_id     = aws_secretsmanager_secret.name.id
+  secret_id     = aws_secretsmanager_secret.sbcntr-mysql-secret.id
   secret_string = jsonencode(local.sbcntrMySqlSecretString)
 }
 
