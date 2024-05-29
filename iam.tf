@@ -183,23 +183,23 @@ resource "aws_iam_policy" "ecs_task_execution_policy" {
 # RDSモニタリング用のIAMポリシー
 data "aws_iam_policy_document" "rds-monitoring-assume-role" {
   statement {
-    actions = [ "sts:AssumeRole" ]
+    actions = ["sts:AssumeRole"]
 
     principals {
-      type = "Service"
-      identifiers = [ "monitoring.rds.amazonaws.com" ]
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
     }
   }
 }
 
 # RDSモニタリング用のIAMロール
 resource "aws_iam_role" "rds-monitering-role" {
-  name = "rds-monitering-role"
+  name               = "rds-monitering-role"
   assume_role_policy = data.aws_iam_policy_document.rds-monitoring-assume-role.json
 }
 
 # RDSモニタリング用のIAMポリシーをアタッチ
 resource "aws_iam_role_policy_attachment" "name" {
-  role = aws_iam_role.rds-monitering-role.name
+  role       = aws_iam_role.rds-monitering-role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }

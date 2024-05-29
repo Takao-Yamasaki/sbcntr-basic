@@ -1,8 +1,8 @@
 # DBサブネットグループの作成
 ## https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_subnet_group
 resource "aws_db_subnet_group" "sbcntr-rds-subnet-group" {
-  name = "sbcntr-rds-subnet-group"
-  subnet_ids = [ aws_subnet.sbcntr-subnet-private-db-1a, aws_subnet.sbcntr-subnet-private-container-1c ]
+  name        = "sbcntr-rds-subnet-group"
+  subnet_ids  = [aws_subnet.sbcntr-subnet-private-db-1a, aws_subnet.sbcntr-subnet-private-container-1c]
   description = "DB subnet group for Aurora"
 
   tags = {
@@ -12,7 +12,7 @@ resource "aws_db_subnet_group" "sbcntr-rds-subnet-group" {
 
 # パラメータグループ
 resource "aws_db_parameter_group" "sbcntr-aurora-rds-parameter-group" {
-  name = "sbcntr-aurora-rds-parameter-group"
+  name   = "sbcntr-aurora-rds-parameter-group"
   family = "aurora-mysql5.7"
 
   tags = {
@@ -22,7 +22,7 @@ resource "aws_db_parameter_group" "sbcntr-aurora-rds-parameter-group" {
 
 # クラスターパラメータグループ
 resource "aws_rds_cluster_parameter_group" "sbcntr-aurora-rds-cluster-parameter-group" {
-  name = "sbcntr-aurora-rds-cluster-parameter-group"
+  name   = "sbcntr-aurora-rds-cluster-parameter-group"
   family = "aurora-mysql5.7"
 
   tags = {
@@ -34,16 +34,16 @@ resource "aws_rds_cluster_parameter_group" "sbcntr-aurora-rds-cluster-parameter-
 ## https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster
 resource "aws_rds_cluster" "sbcntr-db-cluster" {
   cluster_identifier = "sbcntr-db"
-  engine = "aurora-mysql"
-  engine_version = "5.7.mysql_aurora.2.10.2"
-  master_username = "admin"
+  engine             = "aurora-mysql"
+  engine_version     = "5.7.mysql_aurora.2.10.2"
+  master_username    = "admin"
   # パスワードはAWS側で自動生成
-  master_password = random_password.sbcntr-db-password.result
-  db_subnet_group_name = aws_db_subnet_group.sbcntr-rds-subnet-group.name
-  vpc_security_group_ids = [ aws_security_group.sbcntr-sg-db.id ]
-  port = 3306
-  database_name = "sbcntrapp"
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.sbcntr-aurora-rds-cluster-parameter-group.name
+  master_password                  = random_password.sbcntr-db-password.result
+  db_subnet_group_name             = aws_db_subnet_group.sbcntr-rds-subnet-group.name
+  vpc_security_group_ids           = [aws_security_group.sbcntr-sg-db.id]
+  port                             = 3306
+  database_name                    = "sbcntrapp"
+  db_cluster_parameter_group_name  = aws_rds_cluster_parameter_group.sbcntr-aurora-rds-cluster-parameter-group.name
   db_instance_parameter_group_name = aws_db_parameter_group.sbcntr-aurora-rds-parameter-group.name
   # バックアップの保持期間は1日
   backup_retention_period = 1
@@ -63,7 +63,7 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
   }
 
   lifecycle {
-    ignore_changes = [ 
+    ignore_changes = [
       master_password
     ]
   }
@@ -71,19 +71,19 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
 
 # Auroraインスタンスの作成
 resource "aws_rds_cluster_instance" "name" {
-  count = 2
-  identifier = "sbcntr-db-${count.index}"
+  count              = 2
+  identifier         = "sbcntr-db-${count.index}"
   cluster_identifier = aws_rds_cluster.sbcntr-db-cluster.id
   # DBインスタンスサイズ
   instance_class = "db.t3.small"
-  engine = aws_rds_cluster.sbcntr-db-cluster.engine
+  engine         = aws_rds_cluster.sbcntr-db-cluster.engine
   engine_version = aws_rds_cluster.sbcntr-db-cluster.engine_version
   # パブリックアクセスは無効
-  publicly_accessible = false
+  publicly_accessible  = false
   db_subnet_group_name = aws_db_subnet_group.sbcntr-rds-subnet-group.name
   # モニタリングで1分間隔でログを取得
-  monitoring_interval = 60
-  monitoring_role_arn = aws_iam_role.rds-monitering-role.arn
+  monitoring_interval        = 60
+  monitoring_role_arn        = aws_iam_role.rds-monitering-role.arn
   auto_minor_version_upgrade = true
   # メンテナンスの開始日
   # NOTE: UTCなので、日曜の深夜2時から
