@@ -33,12 +33,13 @@ resource "aws_ecs_task_definition" "sbcntr-backend-def" {
           hostPort      = 80,
         }
       ]
-      environment = [
-        { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
-        { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
-        { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
-        { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
-      ]
+      # TODO: コメントアウトした
+      # environment = [
+      #   { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
+      #   { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
+      #   { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
+      #   { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
+      # ]
     }
   ])
 }
