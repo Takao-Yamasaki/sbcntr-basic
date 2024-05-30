@@ -41,7 +41,8 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
   engine_version     = "5.7.mysql_aurora.2.11.2"
   master_username    = "admin"
   # パスワードはAWS側で自動生成
-  master_password                  = random_password.sbcntr-db-password.result
+  ## https://tech.dentsusoken.com/entry/terraform_manage_master_user_password
+  manage_master_user_password = true
   db_subnet_group_name             = aws_db_subnet_group.sbcntr-rds-subnet-group.name
   vpc_security_group_ids           = [aws_security_group.sbcntr-sg-db.id]
   port                             = 3306
@@ -96,14 +97,4 @@ resource "aws_rds_cluster_instance" "sbcntr-db-instance" {
   tags = {
     Name = "sbcntr-db-${count.index}"
   }
-}
-
-// パスワートを自動生成
-// https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password
-resource "random_password" "sbcntr-db-password" {
-  length = 16
-  // 特殊文字を含める
-  special = true
-  // 文字列生成に使用する特殊文字列のリスト
-  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
