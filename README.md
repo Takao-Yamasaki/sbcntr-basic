@@ -4,6 +4,7 @@ sbcntr-basic
 ## プロジェクトについて
 ECSで以下の技術を試したサンプルです。
 - Blue/Greenデプロイ
+- Codeシリーズを使ったCI/CDパイプライン
 
 ## 構成図
 - 構成図の作成には`inframap`と`pluralith`を使用している
@@ -18,9 +19,9 @@ $ pluralith graph
 
 ### Basic
 リソース概要
-<img src="sbcntr_basic_inframap.png">
+<img src="image/sbcntr_basic_inframap.png">
 リソース詳細
-<img src="sbcntr_basic.png">
+<img src="image/sbcntr_basic.png">
 
 ## 開発環境構築
 ```bash
