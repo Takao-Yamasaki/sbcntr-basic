@@ -104,11 +104,6 @@ output "sbcntr-db-cluster-endpoint" {
   value = aws_rds_cluster.sbcntr-db-cluster.endpoint
 }
 
-# インスタンスのエンドポイントを取得
-output "sbcntr-db-cluster-endpoint" {
-  value = aws_rds_cluster_instance.sbcntr-db-instance.endpoint
-}
-
 # 生成されたAdminのパスワードを出力
 output "admin-password" {
   sensitive = true

@@ -44,7 +44,7 @@ resource "aws_iam_policy" "sbcntr-accessing-ecr-repository-policy" {
                 "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-backend",
                 "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-frontend"
             ]
-        },
+        }
     ]
   }
   EOT
@@ -71,10 +71,10 @@ resource "aws_iam_policy" "sbcntr-accessing-codecommit-policy" {
                 "codecommit:Post*",
                 "codecommit:Update*",
                 "codecommit:GitPull*",
-                "codecommit:GitPush**",
+                "codecommit:GitPush*"
             ],
             "Resource": [
-                "arn:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend",
+              "arn:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
             ]
         }
     ]
@@ -190,7 +190,7 @@ resource "aws_iam_role" "ecs-task-execution-role" {
 # カスタマー管理ポリシーのアタッチ（ECSタスク実行ロール）
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-policy" {
   role       = aws_iam_role.ecs-task-execution-role.name
-  policy_arn = aws_iam_policy.ecs_task_execution_policy.arn
+  policy_arn = aws_iam_policy.ecs-task-execution-policy.arn
 }
 
 # カスタマー管理ポリシーのアタッチ（Secret Manager）

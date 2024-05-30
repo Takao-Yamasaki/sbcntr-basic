@@ -23,7 +23,40 @@ $ pluralith graph
 リソース詳細
 <img src="image/sbcntr_basic.png">
 
+## ディレクトリ構成
+```bash
+.
+├── README.md
+├── image # インフラ構成図
+│   ├── sbcntr_basic.png
+│   └── sbcntr_basic_inframap.png
+├── shell # セットアップ用のshell
+│   ├── resize.sh
+│   ├── setup_backend.sh
+│   └── setup_frontend_v1.sh
+└── terraform # Terraform(tfstateはローカル管理)
+    ├── alb.tf
+    ├── cloud9.tf
+    ├── cloudwatch.tf
+    ├── code_commit.tf
+    ├── code_deploy.tf
+    ├── ecr.tf
+    ├── ecs.tf
+    ├── iam.tf
+    ├── network.tf
+    ├── provider.tf
+    ├── rds.tf
+    ├── secrets_manager.tf
+    ├── security_group.tf
+    ├── terraform.tfstate
+    ├── terraform.tfvars
+    └── vpc_endpoint.tf
+```
+
 ## 開発環境構築
+- コマンドの実行には`Taskfile`を使用
+- brewでのインストールは[こちら](https://taskfile.dev/installation/#homebrew)
+- [Makefile卒業 & Taskfile入門](https://zenn.dev/gsy0911/articles/0a8e0e2156579d)
 ```bash
 $ terraform apply
 ```
