@@ -149,3 +149,13 @@ resource "aws_lb_listener" "sbcntr-frontend-listener1" {
     order            = 1
   }
 }
+
+# sbcntr-alb-internalのDNS名を出力
+output "sbcntr-alb-internal-dns" {
+  value = aws_lb.sbcntr-alb-internal.dns_name
+}
+
+# sbcntr-alb-frontendのDNS名を出力
+output "sbcntr-alb-frontend-dns" {
+  value = aws_lb.sbcntr-alb-frontend.dns_name
+}
