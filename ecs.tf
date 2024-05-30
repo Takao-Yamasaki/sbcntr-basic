@@ -41,7 +41,7 @@ resource "aws_ecs_task_definition" "sbcntr-backend-def" {
       ]
     }
   ])
-  depends_on = [ 
+  depends_on = [
     aws_secretsmanager_secret.sbcntr-mysql-secret,
     aws_secretsmanager_secret_version.sbcntr-mysql-secret-version
   ]
@@ -195,7 +195,7 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
     }
   ])
 
-  depends_on = [ 
+  depends_on = [
     aws_secretsmanager_secret.sbcntr-mysql-secret,
     aws_secretsmanager_secret_version.sbcntr-mysql-secret-version
   ]

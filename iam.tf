@@ -53,8 +53,8 @@ resource "aws_iam_policy" "sbcntr-accessing-ecr-repository-policy" {
 # カスタマー管理ポリシーの作成
 ## Cloud9からCodeCommitにアクセスするためのポリシー
 resource "aws_iam_policy" "sbcntr-accessing-codecommit-policy" {
-  name = "sbcntr-AccessingCodeCommitPolicy"
-  policy      = <<-EOT
+  name   = "sbcntr-AccessingCodeCommitPolicy"
+  policy = <<-EOT
   {
     "Version": "2012-10-17",
     "Statement": [
@@ -182,7 +182,7 @@ data "aws_iam_policy_document" "ecs-task-execution-assume-role" {
 
 # IAMロールの作成（ECSタスク実行ロール）
 resource "aws_iam_role" "ecs-task-execution-role" {
-  name               = "ecsTaskExecutionRole"
+  name = "ecsTaskExecutionRole"
   # 信頼関係の設定
   assume_role_policy = data.aws_iam_policy_document.ecs-task-execution-assume-role.json
 }
@@ -229,8 +229,8 @@ resource "aws_iam_policy" "ecs-task-execution-policy" {
 # カスタマー管理ポリシーの作成（Secret Manager）
 ## Secrets Managerのシークレットを参照するため
 resource "aws_iam_policy" "sbcntr-getting-secrets-policy" {
-  name        = "sbcntr-GettingSecretsPolicy"
-  policy      = <<-EOT
+  name   = "sbcntr-GettingSecretsPolicy"
+  policy = <<-EOT
   {
     "Version": "2012-10-17",
     "Statement": [

@@ -91,8 +91,7 @@ frontend側にはECSサービスが存在せず、タスクが自動起動しな
 - DBユーザーの作成
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u admin -p
-password: <password>
+$ mysql -h <endpoint> -u admin --password <password>
 ```
 ```sql
 select host, user from mysql.user;
@@ -105,17 +104,17 @@ select host, user from mysql.user;
 exit
 ```
 ### テーブルとデータの作成
-- 作成済みユーザーでのログインとテーブルが存在しないことを確認
+- 作成済みユーザーでのログイン
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u sbcntruser -p
-password: sbcntrEncp
+$ mysql -h <endpoint> -u sbcntruser --password sbcntrEncp
 ```
+- 作成済みユーザーでのログイン
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u migrate -p
-password: sbcntrMigrate
+$ mysql -h <endpoint> -u migrate --password sbcntrMigrate
 ```
+- テーブルが存在しないことを確認
 ```sql
 use sbcntrapp;
 show tables;
@@ -135,8 +134,7 @@ $ npm run seed
 ```
 - テーブルとデータの確認
 ```bash
-$ mysql -h <endpoint> -u sbcntruser -p
-password: sbcntrEncp
+$ mysql -h <endpoint> -u sbcntruser --password=sbcntrEncp
 ```
 ```sql
 use sbcntrapp;
@@ -185,6 +183,19 @@ DB_USERNAME valueFrom <secretmanagerのarn>:username::
 - ターゲットグループ:`sbcntr-tg-frontend`にコンテナのプライベートIPとport:80を登録する
 ブラウザで表示確認
 - ALB:`sbcntr-alb-frontend`のDNS名を使ってブラウザ表示
+
+## Cloud9からのコードプッシュ(CodeCommit)
+```bash
+$ cd /home/ec2-user/environment/sbcntr-backend
+# 現在のリモートリポジトリの確認
+$ git remote -v
+# CodeCommitリポジトリの切り替え
+$ git remote set-url origin <CodeCommitのURL>
+# 現在のリモートリポジトリの確認
+$ git remote -v
+# CodeCommitへコード反映
+$ git push
+```
 
 ## 環境の削除
 ### 作業中の場合

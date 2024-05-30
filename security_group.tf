@@ -43,10 +43,6 @@ resource "aws_security_group" "sbcntr-sg-management" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-# セキュリティグループIDを出力
-output "sbcntr-sg-management-id" {
-  value = aws_security_group.sbcntr-sg-management.id
-}
 
 # Backend Container用のセキュリティグループ
 resource "aws_security_group" "sbcntr-sg-container" {

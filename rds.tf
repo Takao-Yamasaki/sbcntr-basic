@@ -42,7 +42,7 @@ resource "aws_rds_cluster" "sbcntr-db-cluster" {
   master_username    = "admin"
   # パスワードはAWS側で自動生成
   ## https://tech.dentsusoken.com/entry/terraform_manage_master_user_password
-  manage_master_user_password = true
+  manage_master_user_password      = true
   db_subnet_group_name             = aws_db_subnet_group.sbcntr-rds-subnet-group.name
   vpc_security_group_ids           = [aws_security_group.sbcntr-sg-db.id]
   port                             = 3306
@@ -97,4 +97,20 @@ resource "aws_rds_cluster_instance" "sbcntr-db-instance" {
   tags = {
     Name = "sbcntr-db-${count.index}"
   }
+}
+
+# クラスターのエンドポイントを取得
+output "sbcntr-db-cluster-endpoint" {
+  value = aws_rds_cluster.sbcntr-db-cluster.endpoint
+}
+
+# インスタンスのエンドポイントを取得
+output "sbcntr-db-cluster-endpoint" {
+  value = aws_rds_cluster_instance.sbcntr-db-instance.endpoint
+}
+
+# 生成されたAdminのパスワードを出力
+output "admin-password" {
+  sensitive = true
+  value     = aws_rds_cluster.sbcntr-db-cluster.manage_master_user_password
 }
