@@ -27,3 +27,7 @@ locals {
   }
 }
 
+# シークレットマネージャーのARN
+output "secrets-manager-arn" {
+  value = aws_secretsmanager_secret.sbcntr-mysql-secret.arn
+}
