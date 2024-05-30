@@ -17,9 +17,9 @@ $ pluralith graph
 ```
 
 ### Basic
-- リソース概要
+リソース概要
 <img src="sbcntr_basic_inframap.png">
-- リソース詳細
+リソース詳細
 <img src="sbcntr_basic.png">
 
 ## 開発環境構築

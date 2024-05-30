@@ -33,15 +33,18 @@ resource "aws_ecs_task_definition" "sbcntr-backend-def" {
           hostPort      = 80,
         }
       ]
-      # TODO: コメントアウトした
-      # environment = [
-      #   { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
-      #   { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
-      #   { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
-      #   { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
-      # ]
+      environment = [
+        { "name" : "DB_HOST", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:host::" },
+        { "name" : "DB_NAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:dbname::" },
+        { "name" : "DB_USERNAME", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:username::" },
+        { "name" : "DB_PASSWORD", "valueForm" : "${aws_secretsmanager_secret.sbcntr-mysql-secret.arn}:password::" },
+      ]
     }
   ])
+  depends_on = [ 
+    aws_secretsmanager_secret.sbcntr-mysql-secret,
+    aws_secretsmanager_secret_version.sbcntr-mysql-secret-version
+  ]
 }
 
 # ECSクラスターの作成(Backend)
@@ -161,8 +164,7 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
   container_definitions = jsonencode([
     {
       name      = "app",
-      # TODO: イメージを作ったあとにdbv1に変更すること
-      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:v1",
+      image     = "${data.aws_caller_identity.self.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/sbcntr-frontend:dbv1",
       cpu       = 256,
       memory    = 512,
       essential = true, # タスク実行に必要かどうか
@@ -192,4 +194,9 @@ resource "aws_ecs_task_definition" "sbcntr-frontend-def" {
       ]
     }
   ])
+
+  depends_on = [ 
+    aws_secretsmanager_secret.sbcntr-mysql-secret,
+    aws_secretsmanager_secret_version.sbcntr-mysql-secret-version
+  ]
 }
