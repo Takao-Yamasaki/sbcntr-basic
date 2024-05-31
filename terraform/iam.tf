@@ -15,7 +15,8 @@ resource "aws_iam_policy" "sbcntr-accessing-ecr-repository-policy" {
             ],
             "Resource": [
                 "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-backend",
-                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-frontend"
+                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-frontend",
+                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-base"
             ]
         },
         {
@@ -42,7 +43,8 @@ resource "aws_iam_policy" "sbcntr-accessing-ecr-repository-policy" {
             ],
             "Resource": [
                 "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-backend",
-                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-frontend"
+                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-frontend",
+                "arn:aws:ecr:${var.aws_region}:${data.aws_caller_identity.self.account_id}:repository/sbcntr-base"
             ]
         }
     ]

@@ -268,6 +268,18 @@ $ git add buildspec.yml
 $ git commit -m 'ci: add buildspec'
 $ git push
 ```
+- Cloud9上で実行
+- ECRからベースイメージを取得するようにするため（Too Many Request対策）
+```bash
+$ chmod 755 setup_base_image.sh
+$ ./setup_base_image.sh
+```
+- Dockerfileを次のように修正
+- ECRからベースイメージを取得するようにするため（Too Many Request対策）
+```dockerfile
+FROM <AWS_ACCOUNT_ID></AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
+```
+
 
 ## トラブルシューティング
 ### シークレットが作成できない場合
