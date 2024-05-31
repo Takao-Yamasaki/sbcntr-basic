@@ -1,3 +1,9 @@
+## 使用技術一覧
+<img src="https://camo.qiitausercontent.com/11e97646e81c116c851923e0f45e6a6a8037f64c/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d446f636b65722d3134383843362e7376673f6c6f676f3d646f636b6572267374796c653d666f722d7468652d6261646765">
+<img src="https://camo.qiitausercontent.com/ec57734305b17aa755e88894461c2239ca05e3ea/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d7465727261666f726d2d3230323332413f7374796c653d666f722d7468652d6261646765266c6f676f3d7465727261666f726d266c6f676f436f6c6f723d383434454241">
+
+<img src="https://camo.qiitausercontent.com/07d5685b5d939aa1426673c1bab1a41895543caa/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d415753253230666172676174652d3233324633452e7376673f6c6f676f3d6177732d66617267617465267374796c653d666f722d7468652d6261646765">
+
 ## プロジェクト名
 sbcntr-basic
 
@@ -10,11 +16,11 @@ ECSで以下の技術を試したサンプルです。
 - 構成図の作成には`inframap`と`pluralith`を使用している
 - inframap
 ```bash
-$ inframap generate . | dot -Tpng > inframap_generate.png
+$ task inframap
 ```
 - pluralith
 ```bash
-$ pluralith graph
+$ task pluralith
 ```
 
 ### Basic
@@ -27,17 +33,21 @@ $ pluralith graph
 ```bash
 .
 ├── README.md
-├── image # インフラ構成図
+├── Taskfile.yml
+├── codebuild # CodeBuildの設定ファイル
+│   └── buildspec.yml
+├── image
 │   ├── sbcntr_basic.png
 │   └── sbcntr_basic_inframap.png
-├── shell # セットアップ用のshell
+├── shell # セットアップ用のシェル
 │   ├── resize.sh
 │   ├── setup_backend.sh
 │   └── setup_frontend_v1.sh
-└── terraform # Terraform(tfstateはローカル管理)
+└── terraform # Terraform
     ├── alb.tf
     ├── cloud9.tf
     ├── cloudwatch.tf
+    ├── code_build.tf
     ├── code_commit.tf
     ├── code_deploy.tf
     ├── ecr.tf
@@ -57,9 +67,31 @@ $ pluralith graph
 - コマンドの実行には`Taskfile`を使用
 - brewでのインストールは[こちら](https://taskfile.dev/installation/#homebrew)
 - [Makefile卒業 & Taskfile入門](https://zenn.dev/gsy0911/articles/0a8e0e2156579d)
+### リソースの作成
 ```bash
-$ terraform apply
+$ task apply
 ```
+### 作業中の場合
+- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了する
+- 環境構築に時間がかかるので、ECRをTerraform管理下から除外
+- コマンド実施後、対象のコードをコメントアウトする
+```bash
+# 一覧表示
+$ task list
+# ECRTerraform管理下から除外
+$ task rmecr
+```
+- 作業再開時には、次のコマンドを実行して、シークレット値を削除しておく
+```bash
+$ task rmsec
+```
+### リソースの削除
+- ECRのイメージを削除しておくこと
+- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了しておくこと
+```bash
+$ task destroy 
+```
+
 ## Cloud9の環境構築
 terraformで環境構築後、以下の手順を実行する
 ### セキュリティグループの追加
@@ -230,24 +262,13 @@ $ git remote -v
 # CodeCommitへコード反映
 $ git push
 ```
+- buildspec.ymlのプッシュ
+```bash
+$ git add buildspec.yml
+$ git commit -m 'ci: add buildspec'
+$ git push
+```
 
-## 環境の削除
-### 作業中の場合
-- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了する
-- 環境構築に時間がかかるので、ECRをTerraform管理下から除外
-- コマンド実施後、コメントアウトする
-```bash
-# 一覧表示
-$ terraform state list
-# Terraform管理下から除外
-$ terraform state rm aws_ecr_repository.sbcntr-frontend
-$ terraform state rm aws_ecr_repository.sbcntr-backend
-```
-### 作業終了後
-- (注意)ECRのイメージを事前に削除すること
-```bash
-$ terraform destroy 
-```
 ## トラブルシューティング
 ### シークレットが作成できない場合
 - デフォルトで30日間は復旧期間が設定されているため、CLIから削除する必要がある
@@ -258,8 +279,8 @@ Error: creating Secrets Manager Secret (sbcntr/mysql): operation error Secrets M
 ```
 - 次のコマンドを実行する
 ```bash
-$ aws secretsmanager delete-secret --secret-id sbcntr/mysql --force-delete-without-recovery
-$ aws secretsmanager describe-secret --secret-id sbcntr/mysql
+$ task list
+$ task rmsec
 ```
 
 ### テーブル作成時にエラーになる
