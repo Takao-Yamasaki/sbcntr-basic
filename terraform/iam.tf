@@ -282,49 +282,49 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
     "Version": "2012-10-17",
     "Statement": [
         {
-          "Effect": "Allow",
-          "Resource": [
-            "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
-            "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild'*",
-          ],
-          "Action": [
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
+                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild*"
+            ],
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Resource": "aws:aws:s3:::sbcntr-codepipeline/*"
-          "Action": [
-              "s3:PutObject",
-              "s3:GetObject",
-              "s3:GetObjectVersion",
-              "s3:GetBucketAcl",
-              "s3:GetBucketLocation"
-          ]
+            "Effect": "Allow",
+            "Resource": "aws:aws:s3:::sbcntr-codepipeline/*",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Resource": [
-            "aws:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
-          ], 
-          "Action": [
-              "codecommit:GitPull"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
+            ],
+            "Action": [
+                "codecommit:GitPull"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Action": [
-              "codebuild:CreateReportGroup",
-              "codebuild:CreateRepor",
-              "codebuild:UpdateReport",
-              "codebuild:BatchPutTestCases",
-              "codebuild:BatchPutCodeCoverages "
-          ],
-          "Resource": [
-              "aws:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
+            ],
+            "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+            ]
         }
     ]
   }
@@ -346,19 +346,19 @@ data "aws_iam_policy_document" "sbcntr-codebuild-assume-role" {
 # IAMロールの作成（CodeBuild）
 resource "aws_iam_role" "sbcntr-codebuild-role" {
   name               = "sbcntr-codebuild-role"
-  assume_role_policy = data.aws_iam_policy_document.sbcntr-codebuild-assume-role
+  assume_role_policy = data.aws_iam_policy_document.sbcntr-codebuild-assume-role.json
 }
 
 # カスタマー管理ポリシーをアタッチ（CodeBuild）
 resource "aws_iam_role_policy_attachment" "sbcntr-codebuild-role-policy-for-codebuild" {
   role       = aws_iam_role.sbcntr-codebuild-role.name
-  policy_arn = aws_iam_policy.sbcntr-codebuild-base-policy.json
+  policy_arn = aws_iam_policy.sbcntr-codebuild-base-policy.arn
 }
 
 # カスタマー管理ポリシーをアタッチ（ECR）
 resource "aws_iam_role_policy_attachment" "sbcntr-codebuild-role-policy-for-ecr" {
   role       = aws_iam_role.sbcntr-codebuild-role.name
-  policy_arn = aws_iam_policy.sbcntr-accessing-ecr-repository-policy.json
+  policy_arn = aws_iam_policy.sbcntr-accessing-ecr-repository-policy.arn
 }
 
 # カスタマー管理ポリシーの作成(CodePipeline)
@@ -393,7 +393,7 @@ resource "aws_iam_policy" "sbcntr-codepipeline-base-policy" {
               "codedeploy:GetApplication,
               "codedeploy:GetDeployment",
               "codedeploy:GetDeploymentConfig",
-              "codedeploy:RegisterApplicationRevision",
+              "codedeploy:RegisterApplicationRevision"
           ]
           "Resource": "*"
           "Effect": "Allow" 
