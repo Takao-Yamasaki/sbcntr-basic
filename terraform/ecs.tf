@@ -118,6 +118,15 @@ resource "aws_ecs_service" "sbcntr-backend-service" {
     aws_iam_role.ecs-codedeploy-role, # NOTE: 使うのか不明。不要な場合は削除
     aws_service_discovery_service.sbcntr-ecs-backend-service
   ]
+
+  # 次のリソースが変更されても、サービスは変更しない
+  lifecycle {
+    ignore_changes = [ 
+      load_balancer,
+      desired_count,
+      task_definition
+    ]
+  }
 }
 
 # 名前空間の設定(Backend)

@@ -22,7 +22,6 @@ resource "aws_codepipeline" "sbcntr-pipeline" {
       configuration = {
         RepositoryName       = aws_codecommit_repository.sbcntr-backend.repository_name
         BranchName           = "main"
-        PollforSourceChanges = "false"
         OutputArtifactFormat = "CODE_ZIP"
       }
     }
@@ -57,8 +56,8 @@ resource "aws_codepipeline" "sbcntr-pipeline" {
       configuration = {
         ApplicationName        = "sbcntr-backend"
         DeploymentGroupName    = "sbcntr-ecs-backend-deployment-group"
-        TaskDefinitionArtifact = "SourceArtifact",
-        AppSecTemplateArtifact = "SourceArtifact",
+        TaskDefinitionTemplateArtifact = "SourceArtifact",
+        AppSpecTemplateArtifact = "SourceArtifact",
         Image1ArtifactName     = "BuildArtifact",
         Image1ContainerName    = "IMAGE1_NAME"
       }
@@ -69,12 +68,6 @@ resource "aws_codepipeline" "sbcntr-pipeline" {
 # S3バケットの作成
 resource "aws_s3_bucket" "sbcntr-codepipeline-bucket" {
   bucket = "sbcntr-codepipeline-bucket"
-}
-
-# プライベートS3バケットの設定
-resource "aws_s3_bucket_acl" "sbcntr-codepipeline-bucket" {
-  bucket = aws_s3_bucket.sbcntr-codepipeline-bucket.bucket
-  acl    = "private"
 }
 
 # S3バケットのサーバーサイド暗号化設定
