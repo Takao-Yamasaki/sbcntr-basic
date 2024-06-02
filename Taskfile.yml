@@ -5,6 +5,11 @@ tasks:
     desc: show commands
     cmds:
       - task -l --sort none
+  fmt:
+    desc: terraform fmt
+    dir: terraform
+    cmds:
+      - terraform fmt
   plan:
     desc: terraform plan
     dir: terraform

@@ -360,3 +360,210 @@ resource "aws_iam_role_policy_attachment" "sbcntr-codebuild-role-policy-for-ecr"
   role       = aws_iam_role.sbcntr-codebuild-role.name
   policy_arn = aws_iam_policy.sbcntr-accessing-ecr-repository-policy.json
 }
+
+# カスタマー管理ポリシーの作成(CodePipeline)
+resource "aws_iam_policy" "sbcntr-codepipeline-base-policy" {
+  name   = "sbcntr-codepipeline-base-policy"
+  path   = "/"
+  policy = <<-EOT
+  
+    "Statement": [
+        {
+          "Action": [
+              "iam:PassRole"
+          ]
+          "Resource": "${aws_iam_role.ecs-task-execution-role.arn}",
+          "Effect": "Allow",
+        },
+        {
+          "Action": [
+              "codecommit:CancelUploadArchive",
+              "codecommit:GetBranch",
+              "codecommit:GetCommit",
+              "codecommit:GetUploadArchiveStatus",
+              "codecommit:UploadArchive"
+          ]
+          "Resource": "*"
+          "Effect": "Allow"
+        },
+        {
+          "Action": [
+              "codedeploy:CreateDeployment",
+              "codedeploy:GetApplicationRevision",
+              "codedeploy:GetApplication,
+              "codedeploy:GetDeployment",
+              "codedeploy:GetDeploymentConfig",
+              "codedeploy:RegisterApplicationRevision",
+          ]
+          "Resource": "*"
+          "Effect": "Allow" 
+        },
+        {
+            "Action": [
+                "elasticbeanstalk:*",
+                "ec2:*",
+                "elasticloadbalancing:*",
+                "autoscaling:*",
+                "cloudwatch:*",
+                "s3:*",
+                "sns:*",
+                "cloudformation:*",
+                "rds:*",
+                "sqs:*",
+                "ecs:*"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:ListFunctions"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "opsworks:CreateDeployment",
+                "opsworks:DescribeApps",
+                "opsworks:DescribeCommands",
+                "opsworks:DescribeDeployments",
+                "opsworks:DescribeInstances",
+                "opsworks:DescribeStacks",
+                "opsworks:UpdateApp",
+                "opsworks:UpdateStack"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "cloudformation:CreateStack",
+                "cloudformation:DeleteStack",
+                "cloudformation:DescribeStacks",
+                "cloudformation:UpdateStack",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:SetStackPolicy",
+                "cloudformation:ValidateTemplate"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "codebuild:BatchGetBuilds",
+                "codebuild:StartBuild"
+            ],
+            "Resource": "*",
+            "Effect": "Allow"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "devicefarm:ListProjects",
+                "devicefarm:ListDevicePools",
+                "devicefarm:GetRun",
+                "devicefarm:GetUpload",
+                "devicefarm:CreateUpload",
+                "devicefarm:ScheduleRun"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "servicecatalog:ListProvisioningArtifacts",
+                "servicecatalog:CreateProvisioningArtifact",
+                "servicecatalog:DescribeProvisioningArtifact",
+                "servicecatalog:DeleteProvisioningArtifact",
+                "servicecatalog:UpdateProduct"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:ValidateTemplate"
+            ],
+            "Resource": "*"
+        }
+    ],
+    "Version": "2012-10-17"
+  }
+  EOT
+}
+
+# IAMポリシードキュメント（CodePipeline）
+data "aws_iam_policy_document" "sbcntr-codepipeline-assume-role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["codepipeline.amazonaws.com"]
+    }
+  }
+}
+
+# IAMロールの作成（CodePipeline）
+resource "aws_iam_role" "sbcntr-codepipeline-role" {
+  name               = "sbcntr-pipeline-role"
+  assume_role_policy = data.aws_iam_policy_document.sbcntr-codepipeline-assume-role.json
+}
+
+# カスタマー管理ポリシーをアタッチ（CodePipeline）
+resource "aws_iam_role_policy_attachment" "sbcntr-codepipeline-role-policy-attachment" {
+  role       = aws_iam_role.sbcntr-codepipeline-role.name
+  policy_arn = aws_iam_policy.sbcntr-codepipeline-base-policy.arn
+}
+
+# IAMポリシードキュメント（CloudWatch Event）
+data "aws_iam_policy_document" "sbcntr-cloudwatch-event-assume-role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["events.amazonaws.com"]
+    }
+  }
+}
+
+# IAMロールの作成（CloudWatch Event）
+resource "aws_iam_role" "sbcntr-codepipeline-cloudwatch-event-role" {
+  name               = "sbcntr-codepipeline-cloudwatch-event-role"
+  assume_role_policy = data.aws_iam_policy_document.sbcntr-cloudwatch-event-assume-role.json
+}
+
+# カスタマー管理ポリシーをアタッチ（CloudWatch Event）
+resource "aws_iam_role_policy_attachment" "sbcntr-codepipeline-cloudwatch-event-role-policy-attachment" {
+  role       = aws_iam_role.sbcntr-codepipeline-cloudwatch-event-role.name
+  policy_arn = aws_iam_policy.sbcntr-codepipeline-cloudwatch-event-policy.arn
+}
+
+# カスタマー管理ポリシーの作成（CloudWatch Event）
+resource "aws_iam_policy" "sbcntr-codepipeline-cloudwatch-event-policy" {
+  name        = "sbcntr-codepipeline-cloudwatch-event-policy"
+  path        = "/"
+  description = "sbcntr-codepipeline-cloudwatch-event-policy"
+  policy      = <<-POLICY
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+              "codepipeline:StartPipelineExecutioon"
+          ]
+          "Resource": [
+            "aws:aws:codepipeline:${var.aws_region}:${data.aws_caller_identity.self.account_id}:${aws_codepipeline.sbcntr-pipeline.name}"
+          ]
+        }
+      ]
+    }
+  POLICY
+}

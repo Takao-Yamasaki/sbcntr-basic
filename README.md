@@ -279,8 +279,12 @@ $ ./setup_base_image.sh
 ```dockerfile
 FROM <AWS_ACCOUNT_ID></AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
 ```
-
-
+- appspec.yamlとtaskdef.jsonのプッシュ
+```bash
+$ git add appspec.yaml taskdef.json
+$ git commit -m 'ci: add appspec and task definition'
+$ git push
+```
 ## トラブルシューティング
 ### シークレットが作成できない場合
 - デフォルトで30日間は復旧期間が設定されているため、CLIから削除する必要がある
