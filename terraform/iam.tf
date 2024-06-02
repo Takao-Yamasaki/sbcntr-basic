@@ -284,8 +284,8 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
         {
             "Effect": "Allow",
             "Resource": [
-                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
-                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild*"
+                "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
+                "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild*"
             ],
             "Action": [
                 "logs:CreateLogGroup",
@@ -307,7 +307,7 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
         {
             "Effect": "Allow",
             "Resource": [
-                "aws:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
+                "arn:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
             ],
             "Action": [
                 "codecommit:GitPull"
@@ -316,7 +316,7 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
         {
             "Effect": "Allow",
             "Resource": [
-                "aws:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
+                "arn:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
             ],
             "Action": [
                 "codebuild:CreateReportGroup",
