@@ -222,6 +222,16 @@ resource "aws_iam_policy" "ecs-task-execution-policy" {
           "secretsmanager:GetSecretValue"
         ],
         "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+            "ssmmessages:CreateControlChannel",
+            "ssmmessages:CreateDataChannel",
+            "ssmmessages:OpenControlChannel",
+            "ssmmessages:OpenDataChannel"
+        ],
+        "Resource": "*"
       }
     ]
   }
