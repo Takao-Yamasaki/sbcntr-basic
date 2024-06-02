@@ -71,6 +71,8 @@ $ task pluralith
 ```bash
 $ task apply
 ```
+- (Cloud9の環境構築)[## Cloud9の環境構築]を実施する
+- (フロントエンドの挙動確認)[### フロントエンドの挙動確認]を実施する
 ### 作業中の場合
 - `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了する
 - 環境構築に時間がかかるので、ECRをTerraform管理下から除外
@@ -97,9 +99,11 @@ terraformで環境構築後、以下の手順を実行する
 ### セキュリティグループの追加
 - マネジメントコンソールから、Cloud9に使用しているEC2に`sbcntr-sg-management`というセキュリティグループを追加する
 ### IAMロールの変更
-- Cloud9に使用しているEC2のIAMロールを`sbcntr-cloud9-role`に変更して、IDE内の`[AWS Settings]``[Credentials]`からAMTCを無効化する(EC2起動時にしかプロファイルを変更できないため、要注意)
+- Cloud9に使用しているEC2のIAMロールを`sbcntr-cloud9-role`に変更
+- Cloud9内の`[AWS Settings][Credentials]`からAMTCを無効化する(EC2起動時にしかプロファイルを変更できないため、要注意)
 ```bash
-aws configure list
+# IAMロールが変更されているか確認
+$ aws configure list
 ```
 ### Cloud9の空き領域の確保
 - EBSボリュームを`30GiB`に変更する
@@ -262,7 +266,8 @@ $ git remote -v
 # CodeCommitへコード反映
 $ git push
 ```
-- buildspec.ymlのプッシュ
+- `sbcntr-backend`直下に`buildspec.yml`を作成
+- `buildspec.yml`のプッシュ
 ```bash
 $ git add buildspec.yml
 $ git commit -m 'ci: add buildspec'
@@ -279,7 +284,8 @@ $ ./setup_base_image.sh
 ```dockerfile
 FROM <AWS_ACCOUNT_ID></AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
 ```
-- appspec.yamlとtaskdef.jsonのプッシュ
+- `appspec.yaml`と`taskdef.json`を作成
+- `appspec.yaml`と`taskdef.json`のプッシュ
 ```bash
 $ git add appspec.yaml taskdef.json
 $ git commit -m 'ci: add appspec and task definition'

@@ -409,7 +409,8 @@ resource "aws_iam_policy" "sbcntr-codepipeline-base-policy" {
           "cloudformation:*",
           "rds:*",
           "sqs:*",
-          "ecs:*"
+          "ecs:*",
+          "logs:*:"
         ],
         "Resource": "*",
         "Effect": "Allow"

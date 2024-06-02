@@ -41,6 +41,7 @@ tasks:
     cmds:
       - terraform state rm aws_ecr_repository.sbcntr-frontend
       - terraform state rm aws_ecr_repository.sbcntr-backend
+      - terraform state rm aws_ecr_repository.sbcntr-base
   inframap:
     desc: generate image by inframap
     dir: terraform
