@@ -85,8 +85,9 @@ resource "aws_ecs_service" "sbcntr-backend-service" {
 
   # ヘルスチェックの猶予期間
   health_check_grace_period_seconds = 120
+  # NOTE: Deploy時に権限が必要になるため、一旦コメントアウト
   # ECS Exec を有効化
-  enable_execute_command = true
+  # enable_execute_command = true
 
   network_configuration {
     # パブリックIPの自動割り当てを無効化
