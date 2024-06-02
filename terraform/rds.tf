@@ -106,6 +106,6 @@ output "sbcntr-db-cluster-endpoint" {
 
 # 生成されたAdminのパスワードを出力
 output "admin-password" {
-  sensitive = true
+  sensitive = false
   value     = aws_rds_cluster.sbcntr-db-cluster.manage_master_user_password
 }

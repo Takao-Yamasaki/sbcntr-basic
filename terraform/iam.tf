@@ -282,49 +282,49 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
     "Version": "2012-10-17",
     "Statement": [
         {
-          "Effect": "Allow",
-          "Resource": [
-            "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
-            "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild'*",
-          ],
-          "Action": [
-              "logs:CreateLogGroup",
-              "logs:CreateLogStream",
-              "logs:PutLogEvents"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
+                "aws:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild*"
+            ],
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Resource": "aws:aws:s3:::sbcntr-codepipeline/*"
-          "Action": [
-              "s3:PutObject",
-              "s3:GetObject",
-              "s3:GetObjectVersion",
-              "s3:GetBucketAcl",
-              "s3:GetBucketLocation"
-          ]
+            "Effect": "Allow",
+            "Resource": "aws:aws:s3:::sbcntr-codepipeline/*",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetObjectVersion",
+                "s3:GetBucketAcl",
+                "s3:GetBucketLocation"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Resource": [
-            "aws:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
-          ], 
-          "Action": [
-              "codecommit:GitPull"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:codecommit:${var.aws_region}:${data.aws_caller_identity.self.account_id}:sbcntr-backend"
+            ],
+            "Action": [
+                "codecommit:GitPull"
+            ]
         },
         {
-          "Effect": "Allow",
-          "Action": [
-              "codebuild:CreateReportGroup",
-              "codebuild:CreateRepor",
-              "codebuild:UpdateReport",
-              "codebuild:BatchPutTestCases",
-              "codebuild:BatchPutCodeCoverages "
-          ],
-          "Resource": [
-              "aws:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
-          ]
+            "Effect": "Allow",
+            "Resource": [
+                "aws:aws:codebuild:${var.aws_region}:${data.aws_caller_identity.self.account_id}:report-group/sbcntr-codebuild-*"
+            ],
+            "Action": [
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutTestCases",
+                "codebuild:BatchPutCodeCoverages"
+            ]
         }
     ]
   }
@@ -346,19 +346,19 @@ data "aws_iam_policy_document" "sbcntr-codebuild-assume-role" {
 # IAMロールの作成（CodeBuild）
 resource "aws_iam_role" "sbcntr-codebuild-role" {
   name               = "sbcntr-codebuild-role"
-  assume_role_policy = data.aws_iam_policy_document.sbcntr-codebuild-assume-role
+  assume_role_policy = data.aws_iam_policy_document.sbcntr-codebuild-assume-role.json
 }
 
 # カスタマー管理ポリシーをアタッチ（CodeBuild）
 resource "aws_iam_role_policy_attachment" "sbcntr-codebuild-role-policy-for-codebuild" {
   role       = aws_iam_role.sbcntr-codebuild-role.name
-  policy_arn = aws_iam_policy.sbcntr-codebuild-base-policy.json
+  policy_arn = aws_iam_policy.sbcntr-codebuild-base-policy.arn
 }
 
 # カスタマー管理ポリシーをアタッチ（ECR）
 resource "aws_iam_role_policy_attachment" "sbcntr-codebuild-role-policy-for-ecr" {
   role       = aws_iam_role.sbcntr-codebuild-role.name
-  policy_arn = aws_iam_policy.sbcntr-accessing-ecr-repository-policy.json
+  policy_arn = aws_iam_policy.sbcntr-accessing-ecr-repository-policy.arn
 }
 
 # カスタマー管理ポリシーの作成(CodePipeline)
@@ -366,133 +366,129 @@ resource "aws_iam_policy" "sbcntr-codepipeline-base-policy" {
   name   = "sbcntr-codepipeline-base-policy"
   path   = "/"
   policy = <<-EOT
-  
+  {
+    "Version": "2012-10-17",
     "Statement": [
-        {
-          "Action": [
-              "iam:PassRole"
-          ]
-          "Resource": "${aws_iam_role.ecs-task-execution-role.arn}",
-          "Effect": "Allow",
-        },
-        {
-          "Action": [
-              "codecommit:CancelUploadArchive",
-              "codecommit:GetBranch",
-              "codecommit:GetCommit",
-              "codecommit:GetUploadArchiveStatus",
-              "codecommit:UploadArchive"
-          ]
-          "Resource": "*"
-          "Effect": "Allow"
-        },
-        {
-          "Action": [
-              "codedeploy:CreateDeployment",
-              "codedeploy:GetApplicationRevision",
-              "codedeploy:GetApplication,
-              "codedeploy:GetDeployment",
-              "codedeploy:GetDeploymentConfig",
-              "codedeploy:RegisterApplicationRevision",
-          ]
-          "Resource": "*"
-          "Effect": "Allow" 
-        },
-        {
-            "Action": [
-                "elasticbeanstalk:*",
-                "ec2:*",
-                "elasticloadbalancing:*",
-                "autoscaling:*",
-                "cloudwatch:*",
-                "s3:*",
-                "sns:*",
-                "cloudformation:*",
-                "rds:*",
-                "sqs:*",
-                "ecs:*"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "lambda:InvokeFunction",
-                "lambda:ListFunctions"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "opsworks:CreateDeployment",
-                "opsworks:DescribeApps",
-                "opsworks:DescribeCommands",
-                "opsworks:DescribeDeployments",
-                "opsworks:DescribeInstances",
-                "opsworks:DescribeStacks",
-                "opsworks:UpdateApp",
-                "opsworks:UpdateStack"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "cloudformation:CreateStack",
-                "cloudformation:DeleteStack",
-                "cloudformation:DescribeStacks",
-                "cloudformation:UpdateStack",
-                "cloudformation:CreateChangeSet",
-                "cloudformation:DeleteChangeSet",
-                "cloudformation:DescribeChangeSet",
-                "cloudformation:ExecuteChangeSet",
-                "cloudformation:SetStackPolicy",
-                "cloudformation:ValidateTemplate"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Action": [
-                "codebuild:BatchGetBuilds",
-                "codebuild:StartBuild"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "devicefarm:ListProjects",
-                "devicefarm:ListDevicePools",
-                "devicefarm:GetRun",
-                "devicefarm:GetUpload",
-                "devicefarm:CreateUpload",
-                "devicefarm:ScheduleRun"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "servicecatalog:ListProvisioningArtifacts",
-                "servicecatalog:CreateProvisioningArtifact",
-                "servicecatalog:DescribeProvisioningArtifact",
-                "servicecatalog:DeleteProvisioningArtifact",
-                "servicecatalog:UpdateProduct"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "cloudformation:ValidateTemplate"
-            ],
-            "Resource": "*"
-        }
-    ],
-    "Version": "2012-10-17"
+      {
+        "Action": ["iam:PassRole"],
+        "Resource": "${aws_iam_role.ecs-task-execution-role.arn}",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "codecommit:CancelUploadArchive",
+          "codecommit:GetBranch",
+          "codecommit:GetCommit",
+          "codecommit:GetUploadArchiveStatus",
+          "codecommit:UploadArchive"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "codedeploy:CreateDeployment",
+          "codedeploy:GetApplicationRevision",
+          "codedeploy:GetApplication",
+          "codedeploy:GetDeployment",
+          "codedeploy:GetDeploymentConfig",
+          "codedeploy:RegisterApplicationRevision"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "elasticbeanstalk:*",
+          "ec2:*",
+          "elasticloadbalancing:*",
+          "autoscaling:*",
+          "cloudwatch:*",
+          "s3:*",
+          "sns:*",
+          "cloudformation:*",
+          "rds:*",
+          "sqs:*",
+          "ecs:*"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "lambda:InvokeFunction",
+          "lambda:ListFunctions"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "opsworks:CreateDeployment",
+          "opsworks:DescribeApps",
+          "opsworks:DescribeCommands",
+          "opsworks:DescribeDeployments",
+          "opsworks:DescribeInstances",
+          "opsworks:DescribeStacks",
+          "opsworks:UpdateApp",
+          "opsworks:UpdateStack"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "cloudformation:CreateStack",
+          "cloudformation:DeleteStack",
+          "cloudformation:DescribeStacks",
+          "cloudformation:UpdateStack",
+          "cloudformation:CreateChangeSet",
+          "cloudformation:DeleteChangeSet",
+          "cloudformation:DescribeChangeSet",
+          "cloudformation:ExecuteChangeSet",
+          "cloudformation:SetStackPolicy",
+          "cloudformation:ValidateTemplate"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Action": [
+          "codebuild:BatchGetBuilds",
+          "codebuild:StartBuild"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "devicefarm:ListProjects",
+          "devicefarm:ListDevicePools",
+          "devicefarm:GetRun",
+          "devicefarm:GetUpload",
+          "devicefarm:CreateUpload",
+          "devicefarm:ScheduleRun"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "servicecatalog:ListProvisioningArtifacts",
+          "servicecatalog:CreateProvisioningArtifact",
+          "servicecatalog:DescribeProvisioningArtifact",
+          "servicecatalog:DeleteProvisioningArtifact",
+          "servicecatalog:UpdateProduct"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Effect": "Allow",
+        "Action": ["cloudformation:ValidateTemplate"],
+        "Resource": "*"
+      }
+    ]
   }
   EOT
 }
@@ -558,7 +554,7 @@ resource "aws_iam_policy" "sbcntr-codepipeline-cloudwatch-event-policy" {
           "Effect": "Allow",
           "Action": [
               "codepipeline:StartPipelineExecutioon"
-          ]
+          ],
           "Resource": [
             "aws:aws:codepipeline:${var.aws_region}:${data.aws_caller_identity.self.account_id}:${aws_codepipeline.sbcntr-pipeline.name}"
           ]
