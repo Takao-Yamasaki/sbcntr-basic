@@ -8,10 +8,11 @@ resource "aws_codedeploy_app" "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-bac
 
 # CodeDeployデプロイメントグループ
 # BlueGreenデプロイメント
+# TODO: リソース名を変更すること: sbcntr-ecs-backend-deployment-group
 resource "aws_codedeploy_deployment_group" "dgp-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service" {
   app_name               = aws_codedeploy_app.app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
-  deployment_group_name  = "codedeploy_deployment_group"
+  deployment_group_name  = "sbcntr-ecs-backend-deployment-group"
   service_role_arn       = aws_iam_role.ecs-codedeploy-role.arn
 
   auto_rollback_configuration {
