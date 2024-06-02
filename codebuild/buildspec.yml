@@ -7,10 +7,6 @@ env:
     DOCKER_BUILDKIT: "1"
 
 phases:
-  # ビルド環境でのパッケージインストール
-  install:
-    runtime-versions:
-      docker: 19
   # ビルド前の処理
   pre_build:
     # ECRへのログインと変数設定
@@ -18,9 +14,11 @@ phases:
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query 'Account' --output text)
       # Dockerへの認証
       - aws ecr --region ap-northeast-1 get-login-password | docker login --username AWS --password-stdin https://${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-backend
-      - REPOSITRY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION_NAME}.amazonaws.com/${ECR_REPOSITORY_NAME}
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION_NAME}.amazonaws.com/${ECR_REPOSITORY_NAME}
       # タグ名にGitのコミットハッシュを利用
       - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION} | cut -c 1-7)
+      - echo ${REPOSITORY_URI}
+      - echo ${IMAGE_TAG}
   # ビルド処理
   build:
     commands:
@@ -31,4 +29,8 @@ phases:
     commands:
       # ECRへのイメージプッシュ
       - docker image push ${REPOSITORY_URI}:${IMAGE_TAG}
-
+      - printf '{"name":"%s", "ImageURI":"%s"}' $ECR_REPOSITORY_NAME $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      # アーティファクト      
+    artifacts:
+      files:
+        - imageDetail.json

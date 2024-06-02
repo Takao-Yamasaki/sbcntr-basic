@@ -1,8 +1,9 @@
 # CodeDeploy
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codedeploy_deployment_group
+# TODO: リソース名を変更すること: sbcntr-ecs-backend
 resource "aws_codedeploy_app" "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service" {
   compute_platform = "ECS"
-  name             = "app-ecs-sbcntr-ecs-backend-cluster-sbcntr-ecs-backend-service"
+  name             = "sbcntr-backend"
 }
 
 # CodeDeployデプロイメントグループ

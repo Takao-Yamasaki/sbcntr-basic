@@ -284,8 +284,7 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
         {
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild",
-                "arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.self.account_id}:logs-group:/aws/codebuild/sbcntr-codebuild*"
+                "*"
             ],
             "Action": [
                 "logs:CreateLogGroup",
@@ -295,7 +294,9 @@ resource "aws_iam_policy" "sbcntr-codebuild-base-policy" {
         },
         {
             "Effect": "Allow",
-            "Resource": "aws:aws:s3:::sbcntr-codepipeline/*",
+            "Resource": [
+                "*"
+            ],
             "Action": [
                 "s3:PutObject",
                 "s3:GetObject",
