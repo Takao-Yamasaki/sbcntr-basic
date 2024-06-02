@@ -43,6 +43,19 @@ tasks:
       - terraform state rm aws_ecr_repository.sbcntr-backend || true
       - terraform state rm aws_ecr_repository.sbcntr-base || true
       - terraform state rm aws_s3_bucket.sbcntr-codepipeline-bucket || true
+  impecr:
+    desc: import ecr to terraform state file
+    dir: terraform
+    cmds:
+      - terraform import aws_ecr_repository.sbcntr-frontend sbcntr-frontend || true
+      - terraform import aws_ecr_repository.sbcntr-backend sbcntr-backend || true
+      - terraform import aws_ecr_repository.sbcntr-base sbcntr-base || true
+  appecr:
+    desc: terraform apply for ecr
+    dir: terraform
+    cmds:
+      - terraform apply --target=aws_ecr_repository.sbcntr-frontend --target=aws_ecr_repository.sbcntr-backend --target=aws_ecr_repository.sbcntr-base || true
+      - terraform apply --target=aws_ecr_lifecycle_policy.sbcntr-frontend --target=aws_ecr_lifecycle_policy.sbcntr-frontend --target=aws_ecr_lifecycle_policy.sbcntr-backend --target=aws_ecr_lifecycle_policy.sbcntr-base || true
   inframap:
     desc: generate image by inframap
     dir: terraform
