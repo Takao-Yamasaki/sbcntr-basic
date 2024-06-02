@@ -29,6 +29,10 @@ $ task pluralith
 リソース詳細
 <img src="image/sbcntr_basic.png">
 
+### Advanced
+リソース概要
+<img src="image/sbcntr_advanced_inframap.png">
+
 ## ディレクトリ構成
 ```bash
 .
@@ -282,14 +286,22 @@ $ ./setup_base_image.sh
 - Dockerfileを次のように修正
 - ECRからベースイメージを取得するようにするため（Too Many Request対策）
 ```dockerfile
-FROM <AWS_ACCOUNT_ID></AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
+FROM <AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
 ```
 - `appspec.yaml`と`taskdef.json`を作成
+`taskdef.json`の`<Secret ManagerのARN>`を新しいものに変更しておくこと
 - `appspec.yaml`と`taskdef.json`のプッシュ
 ```bash
 $ git add appspec.yaml taskdef.json
 $ git commit -m 'ci: add appspec and task definition'
 $ git push
+```
+- Cloud9上からリクエスト確認
+```bash
+# 80番ポート
+curl http://<BackendのALBのDNS>/v1/helloworld
+# 10080番ポート
+curl http://<BackendのALBのDNS>:10080/v1/helloworld
 ```
 ## トラブルシューティング
 ### シークレットが作成できない場合
