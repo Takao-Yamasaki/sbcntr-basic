@@ -192,50 +192,13 @@ resource "aws_iam_role" "ecs-task-execution-role" {
 # カスタマー管理ポリシーのアタッチ（ECSタスク実行ロール）
 resource "aws_iam_role_policy_attachment" "ecs-task-execution-policy" {
   role       = aws_iam_role.ecs-task-execution-role.name
-  policy_arn = aws_iam_policy.ecs-task-execution-policy.arn
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
 # カスタマー管理ポリシーのアタッチ（Secret Manager）
 resource "aws_iam_role_policy_attachment" "sbcntr-getting-secrets-policy" {
   role       = aws_iam_role.ecs-task-execution-role.name
   policy_arn = aws_iam_policy.sbcntr-getting-secrets-policy.arn
-}
-
-# カスタマー管理ポリシー(ECSタスク実行ロール)
-resource "aws_iam_policy" "ecs-task-execution-policy" {
-  name        = "ecsTaskExecutionPolicy"
-  description = "Policy for ECS Task Execution"
-  policy      = <<-EOT
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Action": [
-          "ecr:GetAuthorizationToken",
-          "ecr:BatchCheckLayerAvailability",
-          "ecr:GetDownloadUrlForLayer",
-          "ecr:BatchGetImage",
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents",
-          "secretsmanager:GetSecretValue"
-        ],
-        "Resource": "*"
-      },
-      {
-        "Effect": "Allow",
-        "Action": [
-            "ssmmessages:CreateControlChannel",
-            "ssmmessages:CreateDataChannel",
-            "ssmmessages:OpenControlChannel",
-            "ssmmessages:OpenDataChannel"
-        ],
-        "Resource": "*"
-      }
-    ]
-  }
-  EOT
 }
 
 # カスタマー管理ポリシーの作成（Secret Manager）
