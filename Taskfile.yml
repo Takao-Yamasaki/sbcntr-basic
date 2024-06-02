@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+  default:
+    desc: show commands
+    cmds:
+      - task -l --sort none
+  fmt:
+    desc: terraform fmt
+    dir: terraform
+    cmds:
+      - terraform fmt
+  plan:
+    desc: terraform plan
+    dir: terraform
+    cmds:
+      - terraform plan
+  apply:
+    desc: terraform apply
+    dir: terraform
+    cmds:
+      - terraform apply
+  destroy:
+    desc: terraform destroy
+    dir: terraform
+    cmds:
+      - terraform destroy
+  rmsec:
+    desc: remove secrets value from secrets manager
+    cmds:
+      - aws secretsmanager delete-secret --secret-id sbcntr/mysql --force-delete-without-recovery
+      - aws secretsmanager describe-secret --secret-id sbcntr/mysql
+  list:
+    desc: terraform state list
+    dir: terraform
+    cmds:
+      - terraform state list
+  rmecr:
+    desc: remove ecr from terraform state file
+    dir: terraform
+    cmds:
+      - terraform state rm aws_ecr_repository.sbcntr-frontend
+      - terraform state rm aws_ecr_repository.sbcntr-backend
+  inframap:
+    desc: generate image by inframap
+    dir: terraform
+    cmds:
+      - inframap generate . | dot -Tpng > inframap_generate.png
+  pluralith:
+    desc: generate image by pluralith
+    dir: terraform
+    cmds:
+      - pluralith graph
+  

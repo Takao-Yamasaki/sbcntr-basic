@@ -1,31 +1,97 @@
+## 使用技術一覧
+<img src="https://camo.qiitausercontent.com/11e97646e81c116c851923e0f45e6a6a8037f64c/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d446f636b65722d3134383843362e7376673f6c6f676f3d646f636b6572267374796c653d666f722d7468652d6261646765">
+<img src="https://camo.qiitausercontent.com/ec57734305b17aa755e88894461c2239ca05e3ea/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d7465727261666f726d2d3230323332413f7374796c653d666f722d7468652d6261646765266c6f676f3d7465727261666f726d266c6f676f436f6c6f723d383434454241">
+
+<img src="https://camo.qiitausercontent.com/07d5685b5d939aa1426673c1bab1a41895543caa/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f2d415753253230666172676174652d3233324633452e7376673f6c6f676f3d6177732d66617267617465267374796c653d666f722d7468652d6261646765">
+
 ## プロジェクト名
 sbcntr-basic
 
 ## プロジェクトについて
 ECSで以下の技術を試したサンプルです。
 - Blue/Greenデプロイ
+- Codeシリーズを使ったCI/CDパイプライン
 
 ## 構成図
 - 構成図の作成には`inframap`と`pluralith`を使用している
 - inframap
 ```bash
-$ inframap generate . | dot -Tpng > inframap_generate.png
+$ task inframap
 ```
 - pluralith
 ```bash
-$ pluralith graph
+$ task pluralith
 ```
 
 ### Basic
 リソース概要
-<img src="sbcntr_basic_inframap.png">
+<img src="image/sbcntr_basic_inframap.png">
 リソース詳細
-<img src="sbcntr_basic.png">
+<img src="image/sbcntr_basic.png">
+
+## ディレクトリ構成
+```bash
+.
+├── README.md
+├── Taskfile.yml
+├── codebuild # CodeBuildの設定ファイル
+│   └── buildspec.yml
+├── image
+│   ├── sbcntr_basic.png
+│   └── sbcntr_basic_inframap.png
+├── shell # セットアップ用のシェル
+│   ├── resize.sh
+│   ├── setup_backend.sh
+│   └── setup_frontend_v1.sh
+└── terraform # Terraform
+    ├── alb.tf
+    ├── cloud9.tf
+    ├── cloudwatch.tf
+    ├── code_build.tf
+    ├── code_commit.tf
+    ├── code_deploy.tf
+    ├── ecr.tf
+    ├── ecs.tf
+    ├── iam.tf
+    ├── network.tf
+    ├── provider.tf
+    ├── rds.tf
+    ├── secrets_manager.tf
+    ├── security_group.tf
+    ├── terraform.tfstate
+    ├── terraform.tfvars
+    └── vpc_endpoint.tf
+```
 
 ## 開発環境構築
+- コマンドの実行には`Taskfile`を使用
+- brewでのインストールは[こちら](https://taskfile.dev/installation/#homebrew)
+- [Makefile卒業 & Taskfile入門](https://zenn.dev/gsy0911/articles/0a8e0e2156579d)
+### リソースの作成
 ```bash
-$ terraform apply
+$ task apply
 ```
+### 作業中の場合
+- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了する
+- 環境構築に時間がかかるので、ECRをTerraform管理下から除外
+- コマンド実施後、対象のコードをコメントアウトする
+```bash
+# 一覧表示
+$ task list
+# ECRTerraform管理下から除外
+$ task rmecr
+```
+- 作業再開時には、次のコマンドを実行して、シークレット値を削除しておく
+```bash
+$ task rmsec
+```
+### リソースの削除
+- ECRのイメージを削除しておくこと
+- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了しておくこと
+```bash
+$ task destroy 
+```
+
 ## Cloud9の環境構築
 terraformで環境構築後、以下の手順を実行する
 ### セキュリティグループの追加
@@ -91,8 +157,7 @@ frontend側にはECSサービスが存在せず、タスクが自動起動しな
 - DBユーザーの作成
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u admin -p
-password: <password>
+$ mysql -h <endpoint> -u admin --password <password>
 ```
 ```sql
 select host, user from mysql.user;
@@ -105,17 +170,17 @@ select host, user from mysql.user;
 exit
 ```
 ### テーブルとデータの作成
-- 作成済みユーザーでのログインとテーブルが存在しないことを確認
+- 作成済みユーザーでのログイン
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u sbcntruser -p
-password: sbcntrEncp
+$ mysql -h <endpoint> -u sbcntruser --password sbcntrEncp
 ```
+- 作成済みユーザーでのログイン
 ```bash
 $ cd /home/ec2-user/environment
-$ mysql -h <endpoint> -u migrate -p
-password: sbcntrMigrate
+$ mysql -h <endpoint> -u migrate --password sbcntrMigrate
 ```
+- テーブルが存在しないことを確認
 ```sql
 use sbcntrapp;
 show tables;
@@ -135,8 +200,7 @@ $ npm run seed
 ```
 - テーブルとデータの確認
 ```bash
-$ mysql -h <endpoint> -u sbcntruser -p
-password: sbcntrEncp
+$ mysql -h <endpoint> -u sbcntruser --password=sbcntrEncp
 ```
 ```sql
 use sbcntrapp;
@@ -186,22 +250,40 @@ DB_USERNAME valueFrom <secretmanagerのarn>:username::
 ブラウザで表示確認
 - ALB:`sbcntr-alb-frontend`のDNS名を使ってブラウザ表示
 
-## 環境の削除
-### 作業中の場合
-- `sbcntr-ecs-frontend-cluster`内のタスクを手動で終了する
-- 環境構築に時間がかかるので、ECRをTerraform管理下から除外
-- コマンド実施後、コメントアウトする
+## Cloud9からのコードプッシュ(CodeCommit)
 ```bash
-# 一覧表示
-$ terraform state list
-# Terraform管理下から除外
-$ terraform state rm aws_ecr_repository.sbcntr-frontend
-$ terraform state rm aws_ecr_repository.sbcntr-backend
+$ cd /home/ec2-user/environment/sbcntr-backend
+# 現在のリモートリポジトリの確認
+$ git remote -v
+# CodeCommitリポジトリの切り替え
+$ git remote set-url origin <CodeCommitのURL>
+# 現在のリモートリポジトリの確認
+$ git remote -v
+# CodeCommitへコード反映
+$ git push
 ```
-### 作業終了後
-- (注意)ECRのイメージを事前に削除すること
+- buildspec.ymlのプッシュ
 ```bash
-$ terraform destroy 
+$ git add buildspec.yml
+$ git commit -m 'ci: add buildspec'
+$ git push
+```
+- Cloud9上で実行
+- ECRからベースイメージを取得するようにするため（Too Many Request対策）
+```bash
+$ chmod 755 setup_base_image.sh
+$ ./setup_base_image.sh
+```
+- Dockerfileを次のように修正
+- ECRからベースイメージを取得するようにするため（Too Many Request対策）
+```dockerfile
+FROM <AWS_ACCOUNT_ID></AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
+```
+- appspec.yamlとtaskdef.jsonのプッシュ
+```bash
+$ git add appspec.yaml taskdef.json
+$ git commit -m 'ci: add appspec and task definition'
+$ git push
 ```
 ## トラブルシューティング
 ### シークレットが作成できない場合
@@ -213,8 +295,8 @@ Error: creating Secrets Manager Secret (sbcntr/mysql): operation error Secrets M
 ```
 - 次のコマンドを実行する
 ```bash
-$ aws secretsmanager delete-secret --secret-id sbcntr/mysql --force-delete-without-recovery
-$ aws secretsmanager describe-secret --secret-id sbcntr/mysql
+$ task list
+$ task rmsec
 ```
 
 ### テーブル作成時にエラーになる
