@@ -289,7 +289,7 @@ $ ./setup_base_image.sh
 FROM <AWS_ACCOUNT_ID>.dkr.ecr.ap-northeast-1.amazonaws.com/sbcntr-base:golang1.16.8-alpine3.13 AS build-env
 ```
 - `appspec.yaml`と`taskdef.json`を作成
-`taskdef.json`の`<Secret ManagerのARN>`を新しいものに変更しておくこと
+`taskdef.json`の`[AWS_ACCOUNT_ID]`と`[Secret ManagerのARN]`を置換しておくこと
 - `appspec.yaml`と`taskdef.json`のプッシュ
 ```bash
 $ git add appspec.yaml taskdef.json
