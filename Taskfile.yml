@@ -39,9 +39,10 @@ tasks:
     desc: remove ecr from terraform state file
     dir: terraform
     cmds:
-      - terraform state rm aws_ecr_repository.sbcntr-frontend
-      - terraform state rm aws_ecr_repository.sbcntr-backend
-      - terraform state rm aws_ecr_repository.sbcntr-base
+      - terraform state rm aws_ecr_repository.sbcntr-frontend || exit $(($? - 1))
+      - terraform state rm aws_ecr_repository.sbcntr-backend || exit $(($? - 1))
+      - terraform state rm aws_ecr_repository.sbcntr-base || exit $(($? - 1))
+      - terraform state rm aws_s3_bucket.sbcntr-codepipeline-bucket || exit $(($? - 1))
   inframap:
     desc: generate image by inframap
     dir: terraform
